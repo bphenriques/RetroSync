@@ -1,0 +1,13 @@
+# Filter based on: https://github.com/christianhaitian/arkos/wiki/ArkOS-Emulators-and-Ports-information
+
+# ROM file extensions
+- *.{nes,NES}
+- *.{zip,ZIP}
+- *.{7z,7Z}
+
+# Save game files
++ .state
++ .srm
+
+# exclude everything else
+- *

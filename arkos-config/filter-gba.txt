@@ -1,0 +1,15 @@
+# Filter based on: https://github.com/christianhaitian/arkos/wiki/ArkOS-Emulators-and-Ports-information
+
+# ROM file extensions
+- *.{gb,GB}
+- *.{gbc,GBC}
+- *.{gba,GBA}
+- *.{7z,7Z}
+- *.{zip,ZIP}
+
+# Save game files
++ *.srm
++ *.state
+
+# exclude everything else
+- *

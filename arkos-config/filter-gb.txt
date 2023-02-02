@@ -1,0 +1,11 @@
+# ROM file extensions
+- *.{gb,GB}
+- *.{7z,7Z}
+- *.{zip,ZIP}
+
+# Save game files
++ *.srm
++ *.state
+
+# exclude everything else
+- *

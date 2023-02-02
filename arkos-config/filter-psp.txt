@@ -1,0 +1,12 @@
+# Filter based on: https://github.com/christianhaitian/arkos/wiki/ArkOS-Emulators-and-Ports-information
+
+# ROM file extensions
+- *.{iso,ISO}
+- *.{cso,CSO}
+- *.{pbp,PBP}
+
+# Save game files
++ ppsspp/
+
+# exclude everything else
+- *

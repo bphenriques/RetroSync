@@ -1,0 +1,11 @@
+# Filter based on: https://github.com/christianhaitian/arkos/wiki/ArkOS-Emulators-and-Ports-information
+
+# ROM file extensions
+- *.{zip,ZIP}
+- *.{nds,NDS}
+
+# Save game files
++ backup/
+
+# exclude everything else
+- *
