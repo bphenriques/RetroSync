@@ -6,7 +6,7 @@ CONFIG_DIR=${SCRIPT_PATH}/config
 source "${CONFIG_DIR}"/config.env
 source "${SCRIPT_PATH}"/util.sh
 
-RESYNC_MARKER_DIR=${SCRIPT_PATH}/.markers
+RESYNC_MARKER_DIR=${HOME}/.rclone_resync_markers
 
 function sync() {
   local from="$1"
@@ -15,23 +15,30 @@ function sync() {
   local marker_file="$(echo $from:$to | sed 's/[.\/:]/_/g').done"
   local log_file="$(mktemp /tmp/rclone-log.XXX)"
 
+  if [ ! -d "$from" ]; then
+    error "The folder $1 does not exist! Skipping.."
+    sleep 3
+    return
+  fi
+
+  mkdir -p ${RESYNC_MARKER_DIR} # create if it doesn't exist already
   if [ ! -f "${RESYNC_MARKER_DIR}/$marker_file" ]; then
-    info "Resyncing $from to $to"
+    info "Resyncing $from <-> $to"
     "$RCLONE_BIN" mkdir "$to" --verbose
 
     if "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --resync --verbose --log-file $log_file; then
       touch "${RESYNC_MARKER_DIR}/$marker_file"
-      success "Resynced $from with $to"
+      success "Resynced $from <-> $to"
     else
-      error "Failed to resync $from with $to!"
+      error "Failed to resync $from <-> $to!"
       cat "$log_file"
     fi
   else
-    info "Syncing $from to $to"
+    info "Syncing $from <-> $to"
     if "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --verbose --log-file $log_file; then
-      success "Synced $from with $to"
+      success "Synced $from <-> $to"
     else
-      warn "Failed to sync $from with $to!"
+      warn "Failed to sync $from <-> $to!"
       cat "$log_file"
     fi
   fi
@@ -61,11 +68,7 @@ function sync_ports() {
 
 sync_emulators
 success "Synced emulator save games"
-printf "\n\n"
-sleep 3
 
 sync_ports
+echo ""
 success "Synced ports save games"
-printf "\n\n"
-success "Done"
-sleep 5

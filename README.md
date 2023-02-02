@@ -7,23 +7,26 @@ Personal tool to sync my savegames across my systems using [rclone](https://rclo
 The goal is to be able to resume games in any device. This is tailored for my use-case, however things should be relatively
 extensible.
 
-# ArkOS
+# Installation
 
-Install:
-1. Open `Makefile` and change the `ARKOS_HOST` and `ARKOS_INSTALL_DIR` accordingly.
-2. Run `make install-arkos`
-3. Enter your password as prompted.
+Requirements:
+- SSH connection to the target machine
 
-At this stage, you have installed everything.
+1. Clone the project.
+2. Edit `arkos/config.env` or `steamdeck/config.env` according to your needs.
+3. Install:
+    ArkOS: `./install.sh arkos ark@192.168.68.61 /roms2/tools`
+    Steam Deck: `./install.sh arkos 192.168.68.67 TODO`
+4. Follow the next section on how to setup.
 
-Setup:
-1. Enable remote services under `Options`
-2. On your machine, ssh inside the device: `ssh ark@HOST` (for Dropbox setup, tunnel the port by runnign `ssh -L localhost:53682:localhost:53682 username@remote_server`)
-3. Go to the tools directory under `/roms2/tools` or `/roms/tools`.
-4. Run `./setup.sh` which will install `rclone` and setup some directories.
-5. Run `./rclone config` to setup your backend as required. This step is important to run on a separate machine as you may need a internet browser.
+What remains is installing `rclone` and setting up the backend you configured under step 2.
+1. Connect to the machine using SSH and SSH tunneling (important for [rclone](https://rclone.org/dropbox/#get-your-own-dropbox-app-id)). Skip this if you have already `rclone.conf` and you know where to copy it to.
+2. Go to the installation directory. E.g., `cd /roms2/tools/SyncSaveGames`.
+3. Run `./setup.sh` which will install `rclone` and setup additional helpers.
+4. Run `./rclone` to setup your backend. For dropbox, follow this [guide](https://rclone.org/dropbox/#get-your-own-dropbox-app-id).
 
-Note: for dropbox follow the official [guide](Follow the following guide to setup `dropbox` backend in rclone: https://rclone.org/dropbox/#get-your-own-dropbox-app-id).
+Finally, let's do a initial sync: `cd .. && ./SyncSaveGames.sh`
 
-Running:
-1. Open `SyncSaveGames` under `Options`.
+# Advanced
+
+You can skip the `rclone` backend setup if you just copy `rclone.conf` to one of the default directories.
