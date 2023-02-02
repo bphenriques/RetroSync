@@ -10,8 +10,12 @@ info() {
   printf '[ \033[00;34m..\033[0m ] %s\n' "$1"
 }
 
-success() {
-  printf '[ \033[00;32mOK\033[0m ] %s\n' "$1"
+warn() {
+  printf '[\033[1;33mWARN\033[0m] %s\n' "$1" 1>&2 # Redirect to stderror
+}
+
+error() {
+  printf '[\033[0;31mERROR\033[0m] %s\n' "$1" 1>&2 # Redirect to stderror
 }
 
 fail() {
@@ -19,6 +23,6 @@ fail() {
   exit 1
 }
 
-warn() {
-  printf '[\033[1;33mWARN\033[0m] %s\n' "$1" 1>&2 # Redirect to stderror
+success() {
+  printf '[ \033[00;32mOK\033[0m ] %s\n' "$1"
 }

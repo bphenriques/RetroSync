@@ -6,25 +6,37 @@ CONFIG_DIR=${SCRIPT_PATH}/config
 source "${CONFIG_DIR}"/config.env
 source "${SCRIPT_PATH}"/util.sh
 
-MARKERS_DIR=${SCRIPT_PATH}/.markers
+RESYNC_MARKER_DIR=${SCRIPT_PATH}/.markers
 
 function sync() {
   local from="$1"
   local to="$2"
   local filter_file="$3"
   local marker_file="$(echo $from:$to | sed 's/[.\/:]/_/g').done"
+  local log_file="$(mktemp /tmp/rclone-log.XXX)"
 
-  if [ ! -f "${MARKERS_DIR}/$marker_file" ]; then
-    info "Initial sync $from to $to"
+  if [ ! -f "${RESYNC_MARKER_DIR}/$marker_file" ]; then
+    info "Resyncing $from to $to"
     "$RCLONE_BIN" mkdir "$to" --verbose
-    "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --resync --verbose
-    touch "${MARKERS_DIR}/$marker_file"
+
+    if "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --resync --verbose --log-file $log_file; then
+      touch "${RESYNC_MARKER_DIR}/$marker_file"
+      success "Resynced $from with $to"
+    else
+      error "Failed to resync $from with $to!"
+      cat "$log_file"
+    fi
   else
     info "Syncing $from to $to"
-    "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --verbose > ${MARKERS_DIR}/$marker_file \
-      || (warn "Failed to sync $from with $to!" && cat "${MARKERS_DIR}/$marker_file")
+    if "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --verbose --log-file $log_file; then
+      success "Synced $from with $to"
+    else
+      warn "Failed to sync $from with $to!"
+      cat "$log_file"
+    fi
   fi
-  success "Synced $from with $to"
+
+  rm $log_file
 }
 
 function sync_emulators() {
