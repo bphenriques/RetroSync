@@ -1,11 +1,5 @@
-# Filter based on: https://github.com/christianhaitian/arkos/wiki/ArkOS-Emulators-and-Ports-information
-
-# ROM file extensions
-- *.{7z,7Z}
-- *.{gdi,GDI}
-- *.{cdi,CDI}
-- *.{cue,CUE}
-- *.{chd,CHD}
+# Ensure at least one file is picked up. This get buggy if the folder never had anything to sync.
++ *.info
 
 # Save game files
 + *.state1

@@ -1,7 +1,5 @@
-# ROM file extensions
-- *.{gb,GB}
-- *.{7z,7Z}
-- *.{zip,ZIP}
+# Ensure at least one file is picked up. This get buggy if the folder never had anything to sync.
++ *.info
 
 # Save game files
 + *.srm

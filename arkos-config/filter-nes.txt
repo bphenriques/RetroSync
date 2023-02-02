@@ -1,11 +1,6 @@
-# Filter based on: https://github.com/christianhaitian/arkos/wiki/ArkOS-Emulators-and-Ports-information
+# Ensure at least one file is picked up. This get buggy if the folder never had anything to sync.
++ *.info
 
-# ROM file extensions
-- *.{nes,NES}
-- *.{zip,ZIP}
-- *.{7z,7Z}
-
-# Save game files
 + .state
 + .srm
 

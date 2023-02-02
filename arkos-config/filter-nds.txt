@@ -1,11 +1,8 @@
-# Filter based on: https://github.com/christianhaitian/arkos/wiki/ArkOS-Emulators-and-Ports-information
-
-# ROM file extensions
-- *.{zip,ZIP}
-- *.{nds,NDS}
+# Ensure at least one file is picked up. This get buggy if the folder never had anything to sync.
++ *.info
 
 # Save game files
-+ backup/
++ *.dsv
 
 # exclude everything else
 - *

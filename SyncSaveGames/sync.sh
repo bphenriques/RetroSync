@@ -15,15 +15,16 @@ function sync() {
   local marker_file="$(echo $from:$to | sed 's/[.\/:]/_/g').done"
 
   if [ ! -f "${MARKERS_DIR}/$marker_file" ]; then
-    info "First time syncing $from with $to (filter_file=$filter_file)"
+    info "Initial sync $from to $to"
     "$RCLONE_BIN" mkdir "$to" --verbose
-    "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --resync --remove-empty-dirs --verbose
+    "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --resync --verbose
     touch "${MARKERS_DIR}/$marker_file"
   else
-    info "Syncing $from with $to (filter_file=$filter_file)"
-    "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --remove-empty-dirs --verbose
+    info "Syncing $from to $to"
+    "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --verbose > ${MARKERS_DIR}/$marker_file \
+      || (warn "Failed to sync $from with $to!" && cat "${MARKERS_DIR}/$marker_file")
   fi
-  success "Finished syncing $from with $to"
+  success "Synced $from with $to"
 }
 
 function sync_emulators() {
@@ -47,9 +48,12 @@ function sync_ports() {
 }
 
 sync_emulators
-success "Synced all emulator save games"
+success "Synced emulator save games"
+printf "\n\n"
 sleep 3
 
 sync_ports
-success "Synced all ports save games"
-sleep 3
+success "Synced ports save games"
+printf "\n\n"
+success "Done"
+sleep 5

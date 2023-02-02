@@ -2,7 +2,7 @@
 
 debug() {
   if [[ $DEBUG != 0 ]]; then
-    printf '[ \033[00;34mDEBUG\033[0m ] %s\n' "$1"
+    printf '[ \033[00;35mDEBUG\033[0m ] %s\n' "$1"
   fi
 }
 
@@ -20,5 +20,5 @@ fail() {
 }
 
 warn() {
-  printf '[\033[0;31mWARN\033[0m] %s\n' "$1" 1>&2 # Redirect to stderror
+  printf '[\033[1;33mWARN\033[0m] %s\n' "$1" 1>&2 # Redirect to stderror
 }
