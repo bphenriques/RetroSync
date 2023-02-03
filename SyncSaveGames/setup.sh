@@ -3,8 +3,17 @@ set -ef
 SCRIPT_PATH="$(dirname "$0")"
 
 CONFIG_DIR=${SCRIPT_PATH}/config
-source "${CONFIG_DIR}"/config.env
 source "${SCRIPT_PATH}"/util.sh
+
+arch="$(uname -m)"
+case "$arch" in
+  aarch64)
+    RCLONE_URL="https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-linux-arm.zip"
+    ;;
+  *)
+    fail "Unsupported $arch"
+    ;;
+esac
 
 if [ ! -f "$RCLONE_BIN" ]; then
   info "rclone is not installed! Downloading and installing..."

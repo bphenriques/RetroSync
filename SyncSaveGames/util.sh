@@ -1,5 +1,7 @@
 #!/bin/sh
+# Notes: Usually, error and fail should pipe to stderror, however leads to no message being displayed in ArkOS.
 
+RCLONE_BIN="/usr/local/bin/rclone"
 debug() {
   if [[ $DEBUG != 0 ]]; then
     printf '[ \033[00;35mDEBUG\033[0m ] %s\n' "$1"
@@ -11,15 +13,15 @@ info() {
 }
 
 warn() {
-  printf '[\033[1;33mWARN\033[0m] %s\n' "$1" 1>&2 # Redirect to stderror
+  printf '[\033[1;33mWARN\033[0m] %s\n' "$1"
 }
 
 error() {
-  printf '[\033[0;31mERROR\033[0m] %s\n' "$1" 1>&2 # Redirect to stderror
+  printf '[\033[0;31mERROR\033[0m] %s\n' "$1"
 }
 
 fail() {
-  printf '[\033[0;31mFAIL\033[0m] %s\n' "$1" 1>&2 # Redirect to stderror
+  printf '[\033[0;31mFAIL\033[0m] %s\n' "$1"
   exit 1
 }
 

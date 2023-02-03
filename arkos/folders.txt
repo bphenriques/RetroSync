@@ -1,0 +1,18 @@
+# Filter File   Source                                      Destination
+# Emulators
+arcade          /roms2/arcade                               dropbox:roms/arcade
+dos             /roms2/dos/                                 dropbox:roms/dos
+dreamcast       /roms2/dreamcast                            dropbox:roms/dreamcast
+dreamcast       /roms/bios/dc                               dropbox:roms/bios/dc
+gb              /roms2/gb                                   dropbox:roms/gb
+gbc             /roms2/gbc                                  dropbox:roms/gbc
+gba             /roms2/gba                                  dropbox:roms/gba
+megadrive       /roms2/megadrive                            dropbox:roms/megadrive
+nds             /roms2/nds/backup                           dropbox:roms/nds
+nes             /roms2/nes                                  dropbox:roms/nes
+psp             /roms2/psp                                  dropbox:roms/psp
+psx             /roms2/psx                                  dropbox:roms/psx
+snes            /roms2/snes                                 dropbox:roms/snes
+
+# Modern Games
+stardew-valley  /roms2/ports/stardewvalley/savedata/Saves   dropbox:modern/stardew_valley

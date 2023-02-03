@@ -10,8 +10,9 @@ function build() {
 
   echo "Building .. (os=${os} build_dir=$build_dir)"
   cp -r "${SCRIPT_PATH}/SyncSaveGames" "${target_dir}"
-  cp -r "${SCRIPT_PATH}/${os}/SyncSaveGames.sh" "${target_dir}"/SyncSaveGames.sh
-  cp -r "${SCRIPT_PATH}/${os}/config.env" "${target_dir}"/SyncSaveGames/config/config.env
+  cp "${SCRIPT_PATH}/${os}/SyncSaveGames.sh" "${target_dir}"/
+  mkdir "${target_dir}"/SyncSaveGames/config/
+  cp "${SCRIPT_PATH}/${os}/folders.txt" "${target_dir}"/SyncSaveGames/config/
 }
 
 function deploy() {
@@ -21,8 +22,8 @@ function deploy() {
   local retroarch_config="$4"
 
   echo "Deploying .. (build_dir=${build_dir} host=${host} remote_dest=${remote_dest})"
-  echo ""
 
+  echo ""
   echo "   Deleting previous installation .."
   ssh "${host}" "if [ -f ${remote_dest}/SyncSaveGames.sh ]; then rm ${remote_dest}/SyncSaveGames.sh && rm -r ${remote_dest}/SyncSaveGames; fi"
   echo ""
