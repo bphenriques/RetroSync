@@ -8,8 +8,8 @@ source "${SCRIPT_PATH}"/util.sh
 RESYNC_MARKER_DIR=${HOME}/.rclone_resync_markers
 
 if [ "$#" -ne 3 ]; then
-    echo "Illegal number of parameters: ./sync.sh <from> <to> <filter>"
-    return
+    echo "Illegal number of parameters: ./sync.sh <from> <to> <filter_file>"
+    exit 1
 fi
 
 from="$1"
@@ -17,8 +17,8 @@ to="$2"
 filter_file="$3"
 
 if [ ! -d "$from" ]; then
-  warning "The folder $1 does not exist!"
-  return
+  warning "The folder $folder does not exist!"
+  exit 2
 fi
 
 mkdir -p ${RESYNC_MARKER_DIR} # create if it doesn't exist already

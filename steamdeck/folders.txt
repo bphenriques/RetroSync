@@ -1,0 +1,23 @@
+# Filter File   Source                                      Destination
+# Emulators
+arcade          /run/media/mmcblk0p1/Emulation/roms/fbneo         dropbox:roms/arcade
+dos             /run/media/mmcblk0p1/Emulation/roms/dos           dropbox:roms/dos
+dreamcast       /run/media/mmcblk0p1/Emulation/roms/dreamcast     dropbox:roms/dreamcast
+dreamcast       /run/media/mmcblk0p1/Emulation/bios/dc            dropbox:roms/bios/dc
+gb              /run/media/mmcblk0p1/Emulation/roms/gb            dropbox:roms/gb
+gbc             /run/media/mmcblk0p1/Emulation/roms/gbc           dropbox:roms/gbc
+gba             /run/media/mmcblk0p1/Emulation/roms/gba           dropbox:roms/gba
+megadrive       /run/media/mmcblk0p1/Emulation/roms/megadrive     dropbox:roms/megadrive
+
+# Needs fine-tuning to ensure file save is saved as .sav
+nds             /run/media/mmcblk0p1/Emulation/roms/nds           dropbox:roms/nds
+
+nes             /run/media/mmcblk0p1/Emulation/roms/nes           dropbox:roms/nes
+psp             /run/media/mmcblk0p1/Emulation/roms/psp           dropbox:roms/psp
+
+# Needs fine-tuning to ensure file save
+# psx             /run/media/mmcblk0p1/Emulation/roms/psx           dropbox:roms/psx
+snes            /run/media/mmcblk0p1/Emulation/roms/snes          dropbox:roms/snes
+
+# Modern Games
+stardew-valley  /home/deck/.config/StardewValley/Saves            dropbox:modern/stardew_valley

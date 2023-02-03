@@ -22,6 +22,9 @@ function deploy() {
   local retroarch_config="$4"
 
   echo "Deploying .. (build_dir=${build_dir} host=${host} remote_dest=${remote_dest})"
+  echo ""
+  echo "Backing-up ${retroarch_config} .."
+  ssh "${host}" -T <<< "if [ ! -f ${retroarch_config}.before_sync_save_games ]; then cp ${retroarch_config} ${retroarch_config}.before_sync_save_games; fi"
 
   echo ""
   echo "   Deleting previous installation .."
@@ -41,7 +44,7 @@ function deploy() {
 
 if [ "$#" -ne 4 ]; then
     echo "Illegal number of parameters: ./install.sh [arkos|steamdeck] <host> <remote_dest> <retroarch_config>"
-    return
+    exit 1
 fi
 
 os="$1"

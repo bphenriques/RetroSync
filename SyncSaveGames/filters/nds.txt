@@ -2,7 +2,12 @@
 + *.info
 
 # Save game files
+# Drastic
 + *.dsv
+
+# MelonDS
++ *.state
++ *.sav
 
 # exclude everything else
 - *
