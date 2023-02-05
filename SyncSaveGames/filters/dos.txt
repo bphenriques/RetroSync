@@ -2,8 +2,10 @@
 + *.info
 
 # Save game files
-+ *.pure.zip
-+ *.pure.ZIP
++ *.pure.{zip,ZIP}
+
+# Backups
++ *.backup.*
 
 # exclude everything else
 - *

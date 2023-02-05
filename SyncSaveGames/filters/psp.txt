@@ -3,5 +3,8 @@
 
 + ppsspp/
 
+# Backups
++ *.backup.*
+
 # exclude everything else
 - *

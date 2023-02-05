@@ -5,5 +5,8 @@
 + *.srm
 + *.state
 
+# Backups
++ *.backup.*
+
 # exclude everything else
 - *

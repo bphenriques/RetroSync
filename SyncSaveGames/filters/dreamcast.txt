@@ -6,5 +6,8 @@
 + dc_nvmem.bin
 + vmu_save_*.bin
 
+# Backups
++ *.backup.*
+
 # exclude everything else
 - *

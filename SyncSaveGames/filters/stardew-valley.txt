@@ -1,4 +1,8 @@
 # Ensure at least one file is picked up. This get buggy if the folder never had anything to sync.
 + *.info
 
+# Backups
++ *.backup.*
+
+# Include everything (really)
 + **

@@ -4,5 +4,8 @@
 # Save game files
 + *.state
 
+# Backups
++ *.backup.*
+
 # exclude everything else
 - *

@@ -9,5 +9,8 @@
 + *.state
 + *.sav
 
+# Backups
++ *.backup.*
+
 # exclude everything else
 - *
