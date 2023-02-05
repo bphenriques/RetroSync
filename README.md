@@ -1,24 +1,31 @@
-# Arkos Emudeck Syncer
+# Retro Games Sync
 
-Personal tool to sync my savegames across my systems [rclone](https://rclone.org/bisync/).
+A tool to synchronize files between my retro-handhelds using [rclone](https://rclone.org/bisync/). It is potentially
+extensible to other systems but, for now, only supports the systems I use.
 
-Supported systems:
-- [Anbernic RG353M](https://anbernic.com/products/rg353m) using [ArkOS](https://github.com/christianhaitian/arkos).
-- [Steam Deck](https://store.steampowered.com/steamdeck) using [EmuDeck](https://github.com/dragoonDorise/EmuDeck).
+Systems supported:
+- [Anbernic RG353M](https://anbernic.com/products/rg353m)([ArkOS](https://github.com/christianhaitian/arkos))
+- [Steam Deck](https://store.steampowered.com/steamdeck)[EmuDeck](https://github.com/dragoonDorise/EmuDeck)
+- Theoretically any Unix device.
 
-The goal is to be able to resume games in any device. This is tailored for my use-case, however things should be relatively
-extensible. This works as long as the save-games are compatible between devices.
+Does not support:
+- Android
+- Windows (maybe through [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)).
 
-Limitations:
-- Syncing game states is unreliable.
+Use-cases (see more below):
+* Sync ROMs across your devices.
+* Cross-system save games.
+* Backup save games.
 
-**ATTENTION**: This requires having RetroArch setup to write the save games onto the same directories as the roms! If you have already save games, back them up!
+Fair warnings:
+- This will change retroArch settings to write the save games onto the same directories as the roms.
 
 # Installation
 
 Requirements:
 - SSH connection to the target machine
-
+- **ATTENTION**: A backup!
+- 
 Steps:
 1. Clone the project: `git clone https://github.com/bphenriques/arkos-emudeck-syncer`
 2. Edit `arkos/folders.txt` or `steamdeck/folders.txt` according to your needs ([rclone bisync supported backends](https://rclone.org/bisync/#supported-backends)).

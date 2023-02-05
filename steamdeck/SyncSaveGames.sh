@@ -12,8 +12,8 @@ if [ -z "$GW" ]; then
 fi
 
 grep -E '^[a-zA-Z]' "${SCRIPT_PATH}"/SyncSaveGames/config/folders.txt | \
-  while read -r filter from to conflict_strategy; do
-    ${SCRIPT_PATH}/SyncSaveGames/sync.sh "$from" "$to" "${SCRIPT_PATH}"/SyncSaveGames/filters/${filter}.txt "${conflict_strategy:-most-recent}"
+  while read -r id from to filter conflict_strategy; do
+    ${SCRIPT_PATH}/SyncSaveGames/sync.sh "$id" "$from" "$to" "${SCRIPT_PATH}"/SyncSaveGames/filters/${filter} "${conflict_strategy:-most-recent}"
   done
 
 echo ""
