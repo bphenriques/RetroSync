@@ -2,7 +2,7 @@
 set -ef
 SCRIPT_PATH="$(dirname "$0")"
 
-CONFIG_DIR=${SCRIPT_PATH}/config
+# shellcheck source=util.sh
 source "${SCRIPT_PATH}"/util.sh
 
 arch="$(uname -m)"
@@ -25,8 +25,8 @@ if [ ! -f "$RCLONE_BIN" ]; then
   wget --tries 3 --timeout 60 --quiet --show-progress "$RCLONE_URL" -O "$install_dir/rclone.zip"
   unzip -o "$install_dir/rclone.zip" -d "$install_dir"
 
-  mkdir -p $(dirname $RCLONE_BIN)
-  mv "$install_dir"/$(basename $RCLONE_URL .zip)/rclone "$RCLONE_BIN"
+  mkdir -p "$(dirname "$RCLONE_BIN")"
+  mv "$install_dir/$(basename "$RCLONE_URL" .zip)/rclone" "$RCLONE_BIN"
   rm -rf "$install_dir"
   success "rclone is now available at $RCLONE_BIN!"
 else

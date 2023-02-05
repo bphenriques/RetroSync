@@ -1,6 +1,7 @@
 #!/bin/sh
 # Notes: Usually, error and fail should pipe to stderror, however leads to no message being displayed in ArkOS.
 
+DEBUG=0
 RCLONE_BIN="$HOME/.bin/rclone"
 debug() {
   if [[ $DEBUG != 0 ]]; then

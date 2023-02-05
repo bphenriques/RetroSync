@@ -1,11 +1,16 @@
 # Arkos Emudeck Syncer
 
-Personal tool to sync my savegames across my systems using [rclone](https://rclone.org/bisync/):
+Personal tool to sync my savegames across my systems [rclone](https://rclone.org/bisync/).
+
+Supported systems:
 - [Anbernic RG353M](https://anbernic.com/products/rg353m) using [ArkOS](https://github.com/christianhaitian/arkos).
 - [Steam Deck](https://store.steampowered.com/steamdeck) using [EmuDeck](https://github.com/dragoonDorise/EmuDeck).
 
 The goal is to be able to resume games in any device. This is tailored for my use-case, however things should be relatively
 extensible. This works as long as the save-games are compatible between devices.
+
+Limitations:
+- Syncing game states is unreliable.
 
 **ATTENTION**: This requires having RetroArch setup to write the save games onto the same directories as the roms! If you have already save games, back them up!
 
@@ -37,7 +42,6 @@ Steps:
 
 Sometimes gets finicky with empty folders. For that reason, I suggest adding a `system-info.info` so that at least one file is present.
 
-# Issues
-
-- PSX: Ensure name endes with `{rom_base_name}_1.mcd`
+# Limitations
+- PSX: Ensure name ends with `{rom_base_name}_1.mcd`
 - NDS: The file must always end with .dsv (Drastic saves as `.dsv` and melonDS as `.sav`)
