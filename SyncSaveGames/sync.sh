@@ -5,11 +5,8 @@ SCRIPT_PATH="$(dirname "$0")"
 # shellcheck source=util.sh
 source "${SCRIPT_PATH}"/util.sh
 
-SYNC_STATE_DIR=${HOME}/.retro-handheld-sync-state
-
 if [ "$#" -ne 5 ]; then
-  error "Illegal number of parameters: ./sync.sh <id> <from> <to> <filter_file> [manual|most-recent|keep-right|keep-left]"
-  exit 1
+  fail "Illegal number of parameters: ./sync.sh <id> <from> <to> <filter_file> [manual|most-recent|keep-right|keep-left]"
 fi
 
 id="$1"
@@ -19,46 +16,61 @@ filter_file="$4"
 conflict_strategy="$5"
 
 if [ ! -d "$from" ]; then
-  warning "The folder $from does not exist!"
+  warning "The folder %s does not exist!" "$from"
   exit 2
 fi
+
+printf "Last Sync: %s\n" "$(last_sync_ts "${id}")"
+printf "From: %s\n" "${from}"
+printf "To: %s\n" "${to}"
+printf "Filter: %s\n" "$(basename "$filter_file")"
+printf "On Conflict: %s\n" "${conflict_strategy}"
 
 mkdir -p "${SYNC_STATE_DIR}" # create if it doesn't exist already
 
 marker_file="$1".last_sync
 log_file="$(mktemp /tmp/rclone-log.XXX)"
 if [ ! -f "${SYNC_STATE_DIR}/$marker_file" ]; then
-  info "Resyncing $id"
-  "$RCLONE_BIN" mkdir "$to" --verbose
-
+  printf "First time syncing ..\n"
+  "$RCLONE_BIN" mkdir "$to" --verbose # Ensure directory exists
   if ! "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --resync --verbose --log-file "$log_file"; then
     error "Failed to resync $from <-> $to!"
     cat "$log_file"
   fi
 else
-  info "Syncing $id"
   if ! "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --verbose --log-file "$log_file"; then
-    warn "Failed to sync $from <-> $to!"
+    error "Failed to sync $from <-> $to!"
     cat "$log_file"
   fi
 fi
 
 touch "${SYNC_STATE_DIR}/$marker_file"
 
-# Deals with filenames with spaces: https://unix.stackexchange.com/a/9499
 debug "Checking conflicts in $from .."
-num_conflicts=0
-while IFS= read -r -d '' file; do
-  (( num_conflicts++ )) || true
-  "${SCRIPT_PATH}"/solve-conflicts.sh "${file}" "${conflict_strategy}"
+conflicts=()
+while IFS=  read -r -d $'\0' file; do
+  conflicts+=("$file")
 done < <(find "${from}" -name '*..path1' -print0)
 
-if [ "${num_conflicts}" -gt 0 ] && [ "${conflict_strategy}" != "manual" ]; then
-  info "Solved ${num_conflicts} conflict(s). Syncing again .."
-  if ! "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --verbose --log-file "$log_file"; then
-    warn "Failed to sync after conflict resolution $from <-> $to!"
-    cat "$log_file"
+num_conflicts="${#conflicts[@]}"
+if [ "${num_conflicts}" -gt 0 ]; then
+  warn "Found ${num_conflicts} conflict(s)!"
+
+  for file in "${conflicts[@]}"; do
+    "${SCRIPT_PATH}"/solve-conflicts.sh "${file}" "${conflict_strategy}"
+  done
+
+  if [ "${conflict_strategy}" != "manual" ]; then
+    printf "Addressed ${num_conflicts} conflict(s). Syncing again ..\n"
+    if ! "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --verbose --log-file "$log_file"; then
+      warn "Failed to sync ${id} after fixing the conflicts"
+      cat "$log_file"
+    fi
   fi
+fi
+
+if [[ $DEBUG != 0 ]]; then
+  cat "$log_file"
 fi
 
 rm "$log_file"

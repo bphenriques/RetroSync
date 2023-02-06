@@ -14,9 +14,9 @@ function backup_and_restore() {
   timestamp="$(date -r "${file_to_backup}" '+%Y-%m-%d_%H-%M-%S')"
   local backup="${target_file}.backup.${timestamp}"
 
-  info "Backing up ${file_to_backup} to ${backup} .."
+  printf "Backing up ${file_to_backup} to ${backup} ..\n"
   mv "${file_to_backup}" "${backup}"
-  info "Moving up ${file_to_keep} to ${target_file} .."
+  printf "Moving up ${file_to_keep} to ${target_file} ..\n"
   mv "${file_to_keep}" "${target_file}"
 }
 
@@ -36,7 +36,7 @@ if [ ! -f "${file_path2}" ]; then
   exit 2
 fi
 
-info "Found conflict with ${final_file}!"
+printf "Found conflict with ${final_file}!\n"
 case ${strategy} in
   manual)
     warn "Manually solve conflict"

@@ -11,10 +11,15 @@ if [ -z "$GW" ]; then
   return
 fi
 
+total="$(grep -E '^[a-zA-Z]' "${SCRIPT_PATH}"/SyncSaveGames/config/folders.txt | wc -l)"
+current=1
 while read -r id from to filter conflict_strategy; do
+  info "Syncing %s (%d out of %d)" "$id" "${current}" "${total}"
   ${SCRIPT_PATH}/SyncSaveGames/sync.sh "$id" "$from" "$to" "${SCRIPT_PATH}"/SyncSaveGames/filters/${filter} "${conflict_strategy:-most-recent}"
-done <<< $(grep -E '^[a-zA-Z]' "${SCRIPT_PATH}"/SyncSaveGames/config/folders.txt)
+  (( current++ )) || true
+  printf "\n"
+done <<< "$(grep -E '^[a-zA-Z]' "${SCRIPT_PATH}"/SyncSaveGames/config/folders.txt)"
 
-echo ""
-success "Finished sync!"
+printf "\n"
+success "Sync complete!"
 sleep 4
