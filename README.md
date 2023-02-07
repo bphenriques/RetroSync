@@ -52,3 +52,7 @@ Sometimes gets finicky with empty folders. For that reason, I suggest adding a `
 # Limitations
 - PSX: Ensure name ends with `{rom_base_name}_1.mcd`
 - NDS: The file must always end with .dsv (Drastic saves as `.dsv` and melonDS as `.sav`)
+
+# Development Notes
+
+The bash version used in RG353M is `5.0.3(1)-release`.

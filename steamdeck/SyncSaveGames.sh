@@ -1,21 +1,25 @@
 #!/bin/bash
-set -euf
+
+# shellcheck source=util.sh
 SCRIPT_PATH="$(dirname "$0")"
 
 source "${SCRIPT_PATH}"/SyncSaveGames/util.sh
 
-GW=`ip route | awk '/default/ { print $3 }'`
-if [ -z "$GW" ]; then
+if [ -z "$(ip route | awk '/default/ { print $3 }')" ]; then
   warn "Your network connection doesn't seem to be working."
   sleep 5
   return
 fi
 
-grep -E '^[a-zA-Z]' "${SCRIPT_PATH}"/SyncSaveGames/config/folders.txt | \
-  while read -r id from to filter conflict_strategy; do
-    ${SCRIPT_PATH}/SyncSaveGames/sync.sh "$id" "$from" "$to" "${SCRIPT_PATH}"/SyncSaveGames/filters/${filter} "${conflict_strategy:-most-recent}"
-  done
+total="$(grep -cE '^[a-zA-Z]' "${SCRIPT_PATH}"/SyncSaveGames/config/folders.txt)"
+current=1
+while read -r id from to filter conflict_strategy; do
+  printf "Syncing %s (%d out of %d)\n" "$id" "${current}" "${total}"
+  "${SCRIPT_PATH}"/SyncSaveGames/sync.sh "$id" "$from" "$to" "${SCRIPT_PATH}/SyncSaveGames/filters/${filter}" "${conflict_strategy:-most-recent}"
+  (( current++ )) || true
+  printf "\n"
+done <<< "$(grep -E '^[a-zA-Z]' "${SCRIPT_PATH}"/SyncSaveGames/config/folders.txt)"
 
-echo ""
-success "Finished sync!"
+printf "\n"
+success "Sync complete!"
 sleep 4

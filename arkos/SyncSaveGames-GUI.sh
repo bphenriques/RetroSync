@@ -1,6 +1,7 @@
 #!/bin/bash
 SCRIPT_PATH="$(dirname "$0")"
 
+# shellcheck source=util.sh
 source "${SCRIPT_PATH}"/SyncSaveGames/util.sh
 
 # Constants
@@ -117,7 +118,7 @@ function ListConflicts() {
         unset 'conflicts["${selectedConflict}"]'
       fi
     else
-      dialog --infobox "No conflicts!" 3 $width >/dev/tty1
+      dialog --backtitle "${BACKTITLE}" --infobox "No conflicts!" 3 $width >/dev/tty1
       sleep 3
       break
     fi
@@ -170,7 +171,7 @@ SolveFileConflict() {
       echo "Solved"
       ;;
     *)
-      dialog --infobox "ERROR: Unknown resolution $resolution" 15 "$width" >/dev/tty1
+      dialog --backtitle "${BACKTITLE}" --infobox "ERROR: Unknown resolution $resolution" 15 "$width" >/dev/tty1
       sleep 3
       ;;
   esac
@@ -190,6 +191,8 @@ MainMenu() {
       --no-collapse
       --clear
       --cancel-label "Exit"
+      --nook
+      --nocancel
       --menu "Please make your selection" "$height" "$width" 15)
 
     case "$("${selectMenu[@]}" "${menuOpts[@]}" 2>&1 >/dev/tty1)" in

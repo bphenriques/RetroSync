@@ -62,7 +62,7 @@ if [ "${num_conflicts}" -gt 0 ]; then
   done
 
   if [ "${conflict_strategy}" != "manual" ]; then
-    printf "Addressed ${num_conflicts} conflict(s). Syncing again ..\n"
+    printf "Addressed %s conflict(s). Syncing again ..\n" "${num_conflicts}"
     if ! "$RCLONE_BIN" bisync "$from" "$to" --filter-from "$filter_file" --verbose --log-file "$log_file"; then
       warn "Failed to sync ${id} after fixing the conflicts"
       cat "$log_file"

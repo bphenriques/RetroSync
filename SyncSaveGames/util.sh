@@ -13,16 +13,8 @@ debug() {
   fi
 }
 
-info0() { printf "[ .. ] $1" "${@:2}"; }
-info() { printf "[ .. ] $1\n" "${@:2}"; }
-
-warn0() { printf "[WARN] $1" "${@:2}"; }
 warn() { printf "[WARN] $1\n" "${@:2}"; }
-
 success() { printf "[ OK ] $1\n" "${@:2}"; }
-success0() { printf "[ OK ] $1" "${@:2}"; }
-
-error0() { printf "[ERR] $1" "${@:2}"; }
 error() { printf "[ERR] $1\n" "${@:2}"; }
 
 fail() {
