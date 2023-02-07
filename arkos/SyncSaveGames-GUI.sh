@@ -40,7 +40,7 @@ sudo $CONTROLS test-ui.sh rg552 &
 
 function SyncAll() {
   "${SCRIPT_PATH}/SyncSaveGames.sh" |
-    dialog --backtitle "${BACKTITLE}" --title "Sync All" --progressbox 16 $width >/dev/tty1
+    dialog --backtitle "${BACKTITLE}" --title "Sync All" --progressbox 16 "$width" >/dev/tty1
   sleep 3
 }
 
@@ -49,13 +49,14 @@ function Sync() {
   while read -r id from to filter conflict_strategy; do
     # TODO: Does this value work if from or to contain space?
     idFolders["$id"]="$from $to $filter ${conflict_strategy:-manual}"
-  done <<<$( grep -E '^[a-zA-Z]' "${SCRIPT_PATH}/SyncSaveGames/config/folders.txt")
+  done <<<"$( grep -E '^[a-zA-Z]' "${SCRIPT_PATH}/SyncSaveGames/config/folders.txt")"
 
   while true; do
     # Generate option list
     local syncOpts=()
     for id in "${!idFolders[@]}"; do
-      local date="$(last_sync_ts "${id}")"
+      local date
+      date="$(last_sync_ts "${id}")"
       local syncOpts+=("${id}" "${date}")
     done
 
@@ -66,12 +67,12 @@ function Sync() {
       --title "ID      Last Sync"
       --ok-label "Sync"
       --cancel-label "Back"
-      --menu "Select:" $height $width 15)
+      --menu "Select:" "$height" "$width" 15)
 
     selectedId=$("${selectId[@]}" "${syncOpts[@]}" 2>&1 >/dev/tty1) || MainMenu
     while read -r id from to filter conflict_strategy; do
       /roms2/tools/SyncSaveGames/sync.sh "$id" "$from" "$to" "${SCRIPT_PATH}/SyncSaveGames/filters/${filter}" "${conflict_strategy:-most-recent}" |
-        dialog --backtitle "${BACKTITLE}" --title "Syncing ${id}..." --progressbox 15 $width >/dev/tty1
+        dialog --backtitle "${BACKTITLE}" --title "Syncing ${id}..." --progressbox 15 "$width" >/dev/tty1
     done <<<"${selectedId} ${idFolders["${selectedId}"]}"
   done
 }
@@ -87,7 +88,7 @@ function ListConflicts() {
       # Some characters are reserved - ':' is a safe bet.
       conflicts["${id}:${rel}"]="${file_path1}"
     done < <(find "${from}" -name '*..path1' -print0)
-  done <<<$( grep -E '^[a-zA-Z]' "${SCRIPT_PATH}/SyncSaveGames/config/folders.txt")
+  done <<<"$( grep -E '^[a-zA-Z]' "${SCRIPT_PATH}/SyncSaveGames/config/folders.txt")"
 
   while true; do
     if [ "${#conflicts[@]}" -gt 0 ]; then
@@ -104,15 +105,16 @@ function ListConflicts() {
         --title "Conflicting files"
         --ok-label "Solve"
         --cancel-label "Back"
-        --menu "Select:" $height $width 15)
+        --menu "Select:" "$height" "$width" 15)
 
       selectedConflict=$("${selectConflict[@]}" "${conflictOpts[@]}" 2>&1 >/dev/tty1) || MainMenu
 
-      local id="$(echo "${selectedConflict}" | sed -e "s/:.*$//g")"
+      local id
+      id="$(echo "${selectedConflict}" | sed -e "s/:.*$//g")"
       local from="${fromDir["${id}"]}"
       local full_path="${conflicts["${selectedConflict}"]}"
       if [[ "$(SolveFileConflict "${id}" "${from}" "${full_path}")" == "Solved" ]]; then
-        unset conflicts["${selectedConflict}"]
+        unset 'conflicts["${selectedConflict}"]'
       fi
     else
       dialog --infobox "No conflicts!" 3 $width >/dev/tty1
@@ -130,11 +132,12 @@ SolveFileConflict() {
   local from="${2}"
   local file_path1="${3}"
 
-  local file_path2="$(echo -n "$file_path1" | sed 's/\.\.path1/\.\.path2/g')"
-  local left="$(realpath -m --relative-to="${from}" "${file_path1}")"
-  local right="$(realpath -m --relative-to="${from}" "${file_path2}")"
-  local left_date=$(date -r "${file_path1}" "${TIMESTAMP_FORMAT}")
-  local right_date=$(date -r "${file_path2}" "${TIMESTAMP_FORMAT}")
+  local file_path2 left right left_date right_date
+  file_path2="$(echo -n "$file_path1" | sed 's/\.\.path1/\.\.path2/g')"
+  left="$(realpath -m --relative-to="${from}" "${file_path1}")"
+  right="$(realpath -m --relative-to="${from}" "${file_path2}")"
+  left_date=$(date -r "${file_path1}" "${TIMESTAMP_FORMAT}")
+  right_date=$(date -r "${file_path2}" "${TIMESTAMP_FORMAT}")
 
   local msg=""
   if [ "${file_path1}" -nt "${file_path2}" ]; then
@@ -149,7 +152,7 @@ SolveFileConflict() {
     --title "Solving Conflict (${id})"
     --no-collapse
     --clear
-    --menu "${msg}" $height $width 4)
+    --menu "${msg}" "$height" "$width" 4)
 
   resolution="$("${chooseResolution[@]}" "${resolutionOpts[@]}" 2>&1 >/dev/tty1)" || ListConflicts
   case "${resolution}" in
@@ -167,7 +170,7 @@ SolveFileConflict() {
       echo "Solved"
       ;;
     *)
-      dialog --infobox "ERROR: Unknown choice $choice" 15 $width >/dev/tty1
+      dialog --infobox "ERROR: Unknown resolution $resolution" 15 "$width" >/dev/tty1
       sleep 3
       ;;
   esac
@@ -187,7 +190,7 @@ MainMenu() {
       --no-collapse
       --clear
       --cancel-label "Exit"
-      --menu "Please make your selection" $height $width 15)
+      --menu "Please make your selection" "$height" "$width" 15)
 
     case "$("${selectMenu[@]}" "${menuOpts[@]}" 2>&1 >/dev/tty1)" in
       1) SyncAll ;;
