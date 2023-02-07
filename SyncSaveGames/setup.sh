@@ -1,5 +1,4 @@
 #!/bin/bash
-set -ef
 SCRIPT_PATH="$(dirname "$0")"
 
 # shellcheck source=util.sh
@@ -7,15 +6,9 @@ source "${SCRIPT_PATH}"/util.sh
 
 arch="$(uname -m)"
 case "$arch" in
-  aarch64)
-    RCLONE_URL="https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-linux-arm.zip"
-    ;;
-  x86_64)
-    RCLONE_URL="https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-linux-amd64.zip"
-    ;;
-  *)
-    fail "Unsupported $arch architecture"
-    ;;
+  aarch64)  RCLONE_URL="https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-linux-arm.zip"    ;;
+  x86_64)   RCLONE_URL="https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-linux-amd64.zip"  ;;
+  *)  fail "Unsupported $arch architecture" ;;
 esac
 
 if [ ! -f "$RCLONE_BIN" ]; then

@@ -1,11 +1,10 @@
 #!/bin/bash
-set -ef
 SCRIPT_PATH="$(dirname "$0")"
 
 # shellcheck source=util.sh
 source "${SCRIPT_PATH}"/util.sh
 
-function backup_and_restore() {
+backup_and_restore() {
   local file_to_backup="$1"
   local file_to_keep="$2"
   local target_file="$3"
@@ -14,9 +13,9 @@ function backup_and_restore() {
   timestamp="$(date -r "${file_to_backup}" '+%Y-%m-%d_%H-%M-%S')"
   local backup="${target_file}.backup.${timestamp}"
 
-  printf "Backing up ${file_to_backup} to ${backup} ..\n"
+  info "Backing up ${file_to_backup} to ${backup} ..\n"
   mv "${file_to_backup}" "${backup}"
-  printf "Moving up ${file_to_keep} to ${target_file} ..\n"
+  debug "Restoring ${file_to_keep} to ${target_file} ..\n"
   mv "${file_to_keep}" "${target_file}"
 }
 
@@ -38,31 +37,23 @@ fi
 
 printf "Found conflict with ${final_file}!\n"
 case ${strategy} in
-  manual)
-    warn "Manually solve conflict"
-    ;;
+  manual) debug "Manually solve conflict" ;;
   most-recent)
-    info "Keeping the most recent file .."
+    debug "Keeping the most recent file .."
     date_path1="$(date -r "${file_path1}" '+%Y-%m-%d %H:%M:%S')"
     date_path2="$(date -r "${file_path2}" '+%Y-%m-%d %H:%M:%S')"
-    printf '\n%s: %s' "${file_path1}" "${date_path1}"
-    printf '\n%s: %s' "${file_path2}" "${date_path2}"
+    debug '\n%s: %s' "${file_path1}" "${date_path1}"
+    debug '\n%s: %s' "${file_path2}" "${date_path2}"
 
     if [ "${file_path1}" -nt "${file_path2}" ]; then
-      info "Keeping ${file_path1} .."
+      debug "Keeping ${file_path1} .."
       backup_and_restore "${file_path2}" "${file_path1}" "${final_file}"
     else
-      info "Keeping ${file_path2} .."
+      debug "Keeping ${file_path2} .."
       backup_and_restore "${file_path1}" "${file_path2}" "${final_file}"
     fi
     ;;
-  keep-left)
-    backup_and_restore "${file_path2}" "${file_path1}" "${final_file}"
-    ;;
-  keep-right)
-    backup_and_restore "${file_path1}" "${file_path2}" "${final_file}"
-    ;;
-  *)
-    error "Unrecognized conflict resolution strategy ${strategy}!"
-    ;;
+  keep-left)  backup_and_restore "${file_path2}" "${file_path1}" "${final_file}" ;;
+  keep-right) backup_and_restore "${file_path1}" "${file_path2}" "${final_file}" ;;
+  *)  error "Unrecognized conflict resolution strategy ${strategy}!";;
 esac

@@ -38,5 +38,3 @@ last_sync_ts() {
     printf "N/A"
   fi
 }
-
-file_date() {}

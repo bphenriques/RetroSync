@@ -1,5 +1,4 @@
 #!/bin/bash
-set -ef
 SCRIPT_PATH="$(dirname "$0")"
 
 # shellcheck source=util.sh
@@ -20,11 +19,12 @@ if [ ! -d "$from" ]; then
   exit 2
 fi
 
-printf "Last Sync: %s\n" "$(last_sync_ts "${id}")"
 printf "From: %s\n" "${from}"
 printf "To: %s\n" "${to}"
 printf "Filter: %s\n" "$(basename "$filter_file")"
 printf "On Conflict: %s\n" "${conflict_strategy}"
+printf "\n"
+printf "Last Sync: %s\n" "$(last_sync_ts "${id}")"
 
 mkdir -p "${SYNC_STATE_DIR}" # create if it doesn't exist already
 
@@ -44,6 +44,7 @@ else
   fi
 fi
 
+# Update modified-at
 touch "${SYNC_STATE_DIR}/$marker_file"
 
 debug "Checking conflicts in $from .."
