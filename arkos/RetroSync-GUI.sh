@@ -1,11 +1,20 @@
 #!/bin/bash
+# shellcheck disable=SC1091
+
 SCRIPT_PATH="$(dirname "$0")"
 
-# shellcheck source=util.sh
-source "${SCRIPT_PATH}"/SyncSaveGames/util.sh
+source "${SCRIPT_PATH}"/SyncSaveGames/lib/util.sh
+source "${SCRIPT_PATH}"/SyncSaveGames/lib/config.sh
+
+export DEBUG=0
+
+readonly SYNC_ALL_BIN="${SCRIPT_PATH}/RetroSync-SyncAll.sh"
+readonly SYNC_BIN="${SCRIPT_PATH}/SyncSaveGames/sync.sh"
+readonly SOLVE_CONFLICTS_BIN="${SCRIPT_PATH}/SyncSaveGames/solve-conflicts.sh"
+readonly HEALTH_BIN="${SCRIPT_PATH}/SyncSaveGames/health.sh"
 
 # Constants
-BACKTITLE="Retro Sync"
+readonly BACKTITLE="Retro Sync"
 
 sudo chmod 666 /dev/tty1
 printf "\033c" >/dev/tty1
@@ -40,41 +49,40 @@ CONTROLS="/opt/wifi/oga_controls"
 sudo $CONTROLS test-ui.sh rg552 &
 
 SyncAll() {
-  "${SCRIPT_PATH}/SyncSaveGames.sh" |
-    dialog --backtitle "${BACKTITLE}" --title "Sync All" --progressbox 16 "$width" >/dev/tty1
-  sleep 3
+  "${SYNC_ALL_BIN}" | dialog --backtitle "${BACKTITLE}" --title "Sync All" --sleep 3 --progressbox 16 "${width}" >/dev/tty1
 }
 
 Sync() {
-  declare -A idFolders=()
+  declare -A idConfig=()
   while read -r id from to filter conflict_strategy; do
-    # TODO: Does this value work if from or to contain space?
-    idFolders["$id"]="$from $to $filter ${conflict_strategy:-manual}"
+    # TODO: Does this work if 'from' or 'to' contain space?
+    idConfig["$id"]="${from} ${to} ${filter} ${conflict_strategy:-manual}"
   done <<<"$( grep -E '^[a-zA-Z]' "${SCRIPT_PATH}/SyncSaveGames/config/folders.txt")"
 
   while true; do
     # Generate option list
     local syncOpts=()
-    for id in "${!idFolders[@]}"; do
-      local date
-      date="$(last_sync_ts "${id}")"
-      local syncOpts+=("${id}" "${date}")
+    for id in "${!idConfig[@]}"; do
+      local last_sync
+      last_sync="$(config::last_sync_ts "${id}")"
+      syncOpts+=("${id}" "${last_sync}")
     done
 
     local selectId=(dialog
       --backtitle "${BACKTITLE}"
       --no-collapse
       --clear
-      --title "ID      Last Sync"
+      --title "ID              Last Sync"
       --ok-label "Sync"
       --cancel-label "Back"
-      --menu "Select:" "$height" "$width" 15)
+      --menu "Select:" "${height}" "${width}" 15)
 
     selectedId=$("${selectId[@]}" "${syncOpts[@]}" 2>&1 >/dev/tty1) || MainMenu
     while read -r id from to filter conflict_strategy; do
-      /roms2/tools/SyncSaveGames/sync.sh "$id" "$from" "$to" "${SCRIPT_PATH}/SyncSaveGames/filters/${filter}" "${conflict_strategy:-most-recent}" |
-        dialog --backtitle "${BACKTITLE}" --title "Syncing ${id}..." --progressbox 15 "$width" >/dev/tty1
-    done <<<"${selectedId} ${idFolders["${selectedId}"]}"
+      "${SYNC_BIN}" "${id}" "${from}" "${to}" "${filter}" "${conflict_strategy:-most-recent}" |
+        dialog --backtitle "${BACKTITLE}" --title "Syncing ${id}..." --progressbox 15 "${width}" >/dev/tty1
+      sleep 3
+    done <<<"${selectedId} ${idConfig["${selectedId}"]}"
   done
 }
 
@@ -106,7 +114,7 @@ ListConflicts() {
         --title "Conflicting files"
         --ok-label "Solve"
         --cancel-label "Back"
-        --menu "Select:" "$height" "$width" 15)
+        --menu "Select:" "${height}" "${width}" 15)
 
       selectedConflict=$("${selectConflict[@]}" "${conflictOpts[@]}" 2>&1 >/dev/tty1) || MainMenu
 
@@ -118,7 +126,7 @@ ListConflicts() {
         unset 'conflicts["${selectedConflict}"]'
       fi
     else
-      dialog --backtitle "${BACKTITLE}" --infobox "No conflicts!" 3 $width >/dev/tty1
+      dialog --backtitle "${BACKTITLE}" --infobox "No conflicts!" 3 ${width} >/dev/tty1
       sleep 3
       break
     fi
@@ -129,9 +137,9 @@ ListConflicts() {
 # from: Root folder that is being synced
 # file_path1: The absolute path to the "..path1" file that represents a conflict
 SolveFileConflict() {
-  local id="${1}}"
-  local from="${2}"
-  local file_path1="${3}"
+  local id="$1"
+  local from="$2"
+  local file_path1="$3"
 
   local file_path2 left right left_date right_date
   file_path2="$(echo -n "$file_path1" | sed 's/\.\.path1/\.\.path2/g')"
@@ -153,37 +161,43 @@ SolveFileConflict() {
     --title "Solving Conflict (${id})"
     --no-collapse
     --clear
-    --menu "${msg}" "$height" "$width" 4)
+    --menu "${msg}" "${height}" "${width}" 4)
 
   resolution="$("${chooseResolution[@]}" "${resolutionOpts[@]}" 2>&1 >/dev/tty1)" || ListConflicts
   case "${resolution}" in
-    "Keep Both") "${SCRIPT_PATH}/SyncSaveGames/solve-conflicts.sh" "${file_path1}" "manual" >/dev/null ;;
+    "Keep Both") "${SOLVE_CONFLICTS_BIN}" "${file_path1}" "manual" >/dev/null ;;
     "Keep NEWER")
-      "${SCRIPT_PATH}/SyncSaveGames/solve-conflicts.sh" "${file_path1}" "most-recent" >/dev/null
-      echo "Solved"
+      "${SOLVE_CONFLICTS_BIN}" "${file_path1}" "most-recent" >/dev/null
+      printf "Solved"
       ;;
     "Keep Left")
-      "${SCRIPT_PATH}/SyncSaveGames/solve-conflicts.sh" "${file_path1}" "keep-left" >/dev/null
-      echo "Solved"
+      "${SOLVE_CONFLICTS_BIN}" "${file_path1}" "keep-left" >/dev/null
+      printf "Solved"
       ;;
     "Keep Right")
-      "${SCRIPT_PATH}/SyncSaveGames/solve-conflicts.sh" "${file_path1}" "keep-right" >/dev/null
-      echo "Solved"
+      "${SOLVE_CONFLICTS_BIN}" "${file_path1}" "keep-right" >/dev/null
+      printf "Solved"
       ;;
     *)
-      dialog --backtitle "${BACKTITLE}" --infobox "ERROR: Unknown resolution $resolution" 15 "$width" >/dev/tty1
+      dialog --backtitle "${BACKTITLE}" --infobox "ERROR: Unknown resolution $resolution" 15 "${width}" >/dev/tty1
       sleep 3
       ;;
   esac
 }
 
-CurrentConfig() {
-  # List all Ids with the default-conflict-resolution
+ListConfig() {
   echo "Hello"
 }
 
+Health() {
+  local health_indication="$(mktemp)"
+  "${HEALTH_BIN}" > "${health_indication}"
+  dialog --backtitle "${BACKTITLE}" --exit-label "OK" --textbox "${health_indication}" 16 ${width} >/dev/tty1
+  rm "${health_indication}"
+}
+
 MainMenu() {
-  local menuOpts=(1 "Sync All" 2 "Sync..." 3 "Solve Conflicts..." 4 "Configure..." 6 "Exit")
+  local menuOpts=(1 "Sync All" 2 "Sync..." 3 "Solve Conflicts..." 4 "Config..." 5 "Verify Installation" 6 "Exit")
   while true; do
     local selectMenu=(dialog
       --backtitle "${BACKTITLE}"
@@ -193,13 +207,14 @@ MainMenu() {
       --cancel-label "Exit"
       --nook
       --nocancel
-      --menu "Please make your selection" "$height" "$width" 15)
+      --menu "Please make your selection" "${height}" "${width}" 15)
 
     case "$("${selectMenu[@]}" "${menuOpts[@]}" 2>&1 >/dev/tty1)" in
       1) SyncAll ;;
       2) Sync ;;
       3) ListConflicts ;;
-      5) CurrentConfig ;;
+      4) ListConfig ;;
+      5) Health ;;
       6) ExitMenu ;;
     esac
   done

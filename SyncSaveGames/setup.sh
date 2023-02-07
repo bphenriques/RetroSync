@@ -1,27 +1,11 @@
 #!/bin/bash
 SCRIPT_PATH="$(dirname "$0")"
 
-# shellcheck source=util.sh
-source "${SCRIPT_PATH}"/util.sh
+# shellcheck disable=SC1091
+source "${SCRIPT_PATH}"/lib/rclone.sh
 
-arch="$(uname -m)"
-case "$arch" in
-  aarch64)  RCLONE_URL="https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-linux-arm.zip"    ;;
-  x86_64)   RCLONE_URL="https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-linux-amd64.zip"  ;;
-  *)  fail "Unsupported $arch architecture" ;;
-esac
+rclone::install
 
-if [ ! -f "$RCLONE_BIN" ]; then
-  printf "rclone is not installed! Downloading and installing...\n"
-  install_dir=$(mktemp -d)
-  mkdir -p "$install_dir"
-  wget --tries 3 --timeout 60 --quiet --show-progress "$RCLONE_URL" -O "$install_dir/rclone.zip"
-  unzip -o "$install_dir/rclone.zip" -d "$install_dir"
-
-  mkdir -p "$(dirname "$RCLONE_BIN")"
-  mv "$install_dir/$(basename "$RCLONE_URL" .zip)/rclone" "$RCLONE_BIN"
-  rm -rf "$install_dir"
-  printf "rclone is now available at %s!\n" "$RCLONE_BIN"
-else
-  printf "rclone is already installed!\n"
-fi
+# echo "   Setting 'savefiles_in_content_dir' 'savestates_in_content_dir' to true .. (${build_dir} to ${host}:${remote_dest})"
+# "sed -i 's/^savefiles_in_content_dir.*$/savefiles_in_content_dir = \"true\"/g' $retroarch_config"
+# "sed -i 's/^savestates_in_content_dir.*$/savestates_in_content_dir = \"true\"/g' $retroarch_config"

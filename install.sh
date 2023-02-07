@@ -10,8 +10,8 @@ build() {
 
   echo "Building .. (os=${os} build_dir=$build_dir)"
   cp -r "${SCRIPT_PATH}/SyncSaveGames" "${target_dir}"
-  cp "${SCRIPT_PATH}/${os}/SyncSaveGames.sh" "${target_dir}"/
-  cp "${SCRIPT_PATH}/${os}/SyncSaveGames-GUI.sh" "${target_dir}"/
+  cp "${SCRIPT_PATH}/${os}/RetroSync-GUI.sh" "${target_dir}"/
+  cp "${SCRIPT_PATH}/${os}/RetroSync-SyncAll.sh" "${target_dir}"/
   mkdir "${target_dir}"/SyncSaveGames/config/
   cp "${SCRIPT_PATH}/${os}/folders.txt" "${target_dir}"/SyncSaveGames/config/
 }
@@ -35,9 +35,8 @@ deploy() {
   # Glob doesnt work and I do not follow why... so.. two copies.
   echo "   Copying installation .. (${build_dir} to ${host}:${remote_dest})"
   scp -P ${SSH_PORT} -r -p ${build_dir}/SyncSaveGames "${host}":${remote_dest}
-  scp -P ${SSH_PORT} -p ${build_dir}/SyncSaveGames.sh "${host}":${remote_dest}
-  scp -P ${SSH_PORT} -p ${build_dir}/SyncSaveGames-GUI.sh "${host}":${remote_dest}
-
+  scp -P ${SSH_PORT} -p ${build_dir}/RetroSync-SyncAll.sh "${host}":${remote_dest}
+  scp -P ${SSH_PORT} -p ${build_dir}/RetroSync-GUI.sh "${host}":${remote_dest}
   echo ""
   echo "   Setting 'savefiles_in_content_dir' 'savestates_in_content_dir' to true .. (${build_dir} to ${host}:${remote_dest})"
   ssh "${host}" -T <<< "sed -i 's/^savefiles_in_content_dir.*$/savefiles_in_content_dir = \"true\"/g' $retroarch_config"
@@ -60,4 +59,4 @@ build "${build_dir}" "${os}"
 deploy "${build_dir}" "${host}" "${remote_dest}" "${retroarch_config}"
 
 echo "Cleaning up .."
-rm -rf {build_d}
+rm -rf {build_dir}
