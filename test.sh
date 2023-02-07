@@ -4,7 +4,7 @@ SCRIPT_PATH="$(dirname "$0")"
 source "${SCRIPT_PATH}"/SyncSaveGames/util.sh
 
 test_dir="$(mktemp -d /tmp/test.XXX)"
-printf "Running tests on ${test_dir}"
+printf "Running tests on ${test_dir}\n"
 
 ####################
 # TEST 1 - Most Recent
@@ -72,7 +72,7 @@ test -f "${test_dir}/file-keep-right.extension.backup.${backup_date}"
 grep -q "left" "${test_dir}/file-keep-right.extension.backup.${backup_date}"
 grep -q "right" "${test_dir}/file-keep-right.extension"
 
-printf "Tests successful!"
+printf "Tests successful!\n"
 rm -r ${test_dir}
 
 # TODO: Test for directories

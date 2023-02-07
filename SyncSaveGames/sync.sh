@@ -55,7 +55,7 @@ done < <(find "${from}" -name '*..path1' -print0)
 
 num_conflicts="${#conflicts[@]}"
 if [ "${num_conflicts}" -gt 0 ]; then
-  warn "Found ${num_conflicts} conflict(s)!"
+  warning "Found %s conflict(s)!" "${num_conflicts}"
 
   for file in "${conflicts[@]}"; do
     "${SCRIPT_PATH}"/solve-conflicts.sh "${file}" "${conflict_strategy}"

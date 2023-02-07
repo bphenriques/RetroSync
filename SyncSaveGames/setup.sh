@@ -12,7 +12,7 @@ case "$arch" in
 esac
 
 if [ ! -f "$RCLONE_BIN" ]; then
-  printf "rclone is not installed! Downloading and installing..."
+  printf "rclone is not installed! Downloading and installing...\n"
   install_dir=$(mktemp -d)
   mkdir -p "$install_dir"
   wget --tries 3 --timeout 60 --quiet --show-progress "$RCLONE_URL" -O "$install_dir/rclone.zip"
@@ -21,7 +21,7 @@ if [ ! -f "$RCLONE_BIN" ]; then
   mkdir -p "$(dirname "$RCLONE_BIN")"
   mv "$install_dir/$(basename "$RCLONE_URL" .zip)/rclone" "$RCLONE_BIN"
   rm -rf "$install_dir"
-  success "rclone is now available at $RCLONE_BIN!"
+  printf "rclone is now available at %s!\n" "$RCLONE_BIN"
 else
-  success "rclone is already installed!"
+  printf "rclone is already installed!\n"
 fi

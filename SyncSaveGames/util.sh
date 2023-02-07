@@ -9,16 +9,15 @@ TIMESTAMP_FORMAT='+%Y-%m-%d %H:%M:%S'
 
 debug() {
   if [[ $DEBUG != 0 ]]; then
-    printf "[DEBU] $1\n" "${@:2}"
+    printf "$1\n" "${@:2}"
   fi
 }
 
-warn() { printf "[WARN] $1\n" "${@:2}"; }
-success() { printf "[ OK ] $1\n" "${@:2}"; }
-error() { printf "[ERR] $1\n" "${@:2}"; }
+warn() { printf "Warning! $1\n" "${@:2}"; }
+error() { printf "Error! $1\n" "${@:2}"; }
 
 fail() {
-  printf "[FAIL] $1\n" "${@:2}"
+  printf "Fail!! $1\n" "${@:2}"
   exit 1
 }
 

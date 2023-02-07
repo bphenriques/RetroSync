@@ -39,13 +39,13 @@ ExitMenu() {
 CONTROLS="/opt/wifi/oga_controls"
 sudo $CONTROLS test-ui.sh rg552 &
 
-function SyncAll() {
+SyncAll() {
   "${SCRIPT_PATH}/SyncSaveGames.sh" |
     dialog --backtitle "${BACKTITLE}" --title "Sync All" --progressbox 16 "$width" >/dev/tty1
   sleep 3
 }
 
-function Sync() {
+Sync() {
   declare -A idFolders=()
   while read -r id from to filter conflict_strategy; do
     # TODO: Does this value work if from or to contain space?
@@ -78,7 +78,7 @@ function Sync() {
   done
 }
 
-function ListConflicts() {
+ListConflicts() {
   declare -A conflicts=()
   declare -A fromDir=()
   while read -r id from to filter conflict_strategy; do
@@ -177,7 +177,7 @@ SolveFileConflict() {
   esac
 }
 
-function CurrentConfig() {
+CurrentConfig() {
   # List all Ids with the default-conflict-resolution
   echo "Hello"
 }

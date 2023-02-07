@@ -4,7 +4,7 @@ SCRIPT_PATH="$(dirname "$0")"
 
 SSH_PORT=22
 
-function build() {
+build() {
   local target_dir="$1"
   local os="$2"
 
@@ -16,7 +16,7 @@ function build() {
   cp "${SCRIPT_PATH}/${os}/folders.txt" "${target_dir}"/SyncSaveGames/config/
 }
 
-function deploy() {
+deploy() {
   local build_dir="$1"
   local host="$2"
   local remote_dest="$3"

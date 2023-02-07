@@ -21,5 +21,5 @@ while read -r id from to filter conflict_strategy; do
 done <<< "$(grep -E '^[a-zA-Z]' "${SCRIPT_PATH}"/SyncSaveGames/config/folders.txt)"
 
 printf "\n"
-success "Sync complete!"
+printf "Sync complete!\n"
 sleep 4
