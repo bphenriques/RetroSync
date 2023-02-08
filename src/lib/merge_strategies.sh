@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 if [ -n "$__RETRO_SYNC_MERGE_STRATEGIES_SOURCED" ]; then return; fi
 __RETRO_SYNC_MERGE_STRATEGIES_SOURCED=1
 

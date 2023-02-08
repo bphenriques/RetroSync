@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # shellcheck disable=SC1091
 SCRIPT_PATH="$(dirname "$0")"
 
@@ -7,7 +7,7 @@ source "${SCRIPT_PATH}"/lib/config.sh
 source "${SCRIPT_PATH}"/lib/merge_strategies.sh
 
 if [ "$#" -ne 2 ]; then
-  error "Illegal number of parameters: ./solve-conflicts.sh <file_path1> [manual|most-recent|keep-right|keep-left]"
+  error "Illegal number of parameters: ./fix-conflicts.sh <file_path1> [manual|most-recent|keep-right|keep-left]"
   exit 1
 fi
 

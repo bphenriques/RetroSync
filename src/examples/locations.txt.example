@@ -1,0 +1,8 @@
+#
+# Sample backup to a remove folder
+# <id>            <local-absolute-path>         <remote-path>       <filter-file>
+#
+
+gb                /roms2/gb             dropbox:roms/gb           gb.txt
+gbc               /roms2/gbc            dropbox:roms/gbc          gbc.txt
+gba               /roms2/gba            dropbox:roms/gba          gba.txt

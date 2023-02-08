@@ -1,9 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 if [ -n "$__RETRO_SYNC_RCLONE_SOURCED" ]; then return; fi
 __RETRO_SYNC_RCLONE_SOURCED=1
-
-readonly RCLONE_BIN="$HOME/.bin/rclone"
-readonly MAX_DELETE_PERCENTAGE=100      # Defaults to 50 in rclone
 
 rclone::install() {
   local arch
@@ -17,7 +15,7 @@ rclone::install() {
       ;;
   esac
 
-  if [ ! -f "${RCLONE_BIN}" ]; then
+  if [ ! -f "${RETROSYNC[rcloneBin]}" ]; then
     printf "rclone is not installed! Downloading and installing...\n"
     local install_dir
     install_dir=$(mktemp -d)
@@ -25,12 +23,12 @@ rclone::install() {
     wget --tries 3 --timeout 60 --quiet --show-progress "$RCLONE_URL" -O "${install_dir}/rclone.zip"
     unzip -o "${install_dir}/rclone.zip" -d "${install_dir}"
 
-    mkdir -p "$(dirname "${RCLONE_BIN}")"
-    mv "${install_dir}/$(basename "$RCLONE_URL" .zip)/rclone" "${RCLONE_BIN}"
+    mkdir -p "$(dirname "${RETROSYNC[rcloneBin]}")"
+    mv "${install_dir}/$(basename "$RCLONE_URL" .zip)/rclone" "${RETROSYNC[rcloneBin]}"
     rm -rf "${install_dir}"
-    printf "rclone is now available at %s!\n" "${RCLONE_BIN}"
+    printf "rclone is now available at %s!\n" "${RETROSYNC[rcloneBin]}"
   else
-    printf "rclone is already installed at %s!\n" "${RCLONE_BIN}"
+    printf "rclone is already installed at %s!\n" "${RETROSYNC[rcloneBin]}"
   fi
 
   return 0
@@ -43,18 +41,18 @@ rclone::bisync() {
   local resync="$4"
 
   declare -a flags
-  flags=(--max-delete "${MAX_DELETE_PERCENTAGE}" --verbose --log-file "${LOG_FILE}")
+  flags=(--max-delete "${RETROSYNC[maxDeleteProtectionPercent]}" --verbose --log-file "${RETROSYNC[logFile]}")
   if [[ "${resync}" != 0 ]]; then
     flags+=("--resync")
   fi
-  if [[ "${DEBUG}" != 0 ]]; then
+  if [[ "${RETROSYNC[debug]}" != 0 ]]; then
     flags+=("--verbose")
   fi
 
-  "${RCLONE_BIN}" bisync "${from}" "${to}" --filter-from "${filter_file}" "${flags[@]}"
+  "${RETROSYNC[rcloneBin]}" bisync "${from}" "${to}" --filter-from "${filter_file}" "${flags[@]}"
 }
 
 rclone::mkdir() {
   local dir="$1"
-  "${RCLONE_BIN}" mkdir "${dir}" --verbose --log-file "${LOG_FILE}"
+  "${RETROSYNC[rcloneBin]}" mkdir "${dir}" --log-file "${RETROSYNC[logFile]}"
 }

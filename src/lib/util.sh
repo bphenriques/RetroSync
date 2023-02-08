@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # shellcheck disable=SC2059
 
 if [ -n "$__RETRO_SYNC_UTIL_SOURCED" ]; then return; fi
 __RETRO_SYNC_UTIL_SOURCED=1
 
 debug() {
-  [[ "${DEBUG}" != 0 ]] && printf "$1\n" "${@:2}"
+  [[ "${RETROSYNC[debug]}" != 0 ]] && printf "$1\n" "${@:2}"
 }
 
 warn() { printf "Warning! $1\n" "${@:2}"; }

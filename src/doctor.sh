@@ -1,10 +1,24 @@
-#!/bin/bash
+#!/usr/bin/env bash
 SCRIPT_PATH="$(dirname "$0")"
+
+# TODO: Check Bash greater than 4
+
+if command -v dialog >/dev/null; then
+  println '[OK] - dialog binary!\n'
+else
+  printf '[WARN] dialog binary not available!\n'
+fi
 
 if [ -f "${SCRIPT_PATH}"/config/folders.txt ]; then
   printf "[OK] configuration file exists\n" "${id}"
 else
   printf "[FAIL] configuration file missing: %s\n" "${id}" "${SCRIPT_PATH}"/config/folders.txt
+fi
+
+if [[ -z "$(rclone listremotes 2>/dev/null)" ]]; then
+  printf "[OK] rclone remote is set" "${id}"
+else
+  printf "[OK] rclone remote not set\n" "${id}"
 fi
 
 while read -r id from to filter conflict_strategy; do

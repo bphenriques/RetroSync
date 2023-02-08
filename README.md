@@ -25,25 +25,16 @@ Fair warnings:
 Requirements:
 - SSH connection to the target machine
 - **ATTENTION**: A backup!
-- 
-Steps:
-1. Clone the project: `git clone https://github.com/bphenriques/arkos-emudeck-syncer`
-2. Edit `arkos/folders.txt` or `steamdeck/folders.txt` according to your needs ([rclone bisync supported backends](https://rclone.org/bisync/#supported-backends)).
-   
-   Suggestion: play around with your-save games in each device until you find where exactly each save game is. To be sure, try to copy each save-game manually to confirm cross-compatibility.
 
-3. Install:
+1. SSH to the device (you may want [SSH tunneling](https://rclone.org/dropbox/#get-your-own-dropbox-app-id))
+2. Install:
 
-    ArkOS: `./install.sh arkos ark@192.168.68.61 /roms2/tools "/home/ark/.config/retroarch/retroarch.cfg"`
+    ArkOS: `$ export INSTALL_DIR=/opt/system/Tools && /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/bphenriques/RetroSync/development/bin/install.sh)"`
 
-    Steam Deck: `./install.sh steamdeck deck@192.168.68.67 /run/media/mmcblk0p1/ /home/deck/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg`
+    Steam Deck: `...`
 
-4. Connect to the machine using SSH tunneling (important for [rclone](https://rclone.org/dropbox/#get-your-own-dropbox-app-id)).
-5. Go to the installation directory: `cd /roms2/tools/SyncSaveGames`.
-6. Run `./setup.sh` which will install `rclone`.
-7. Run `/usr/local/bin/rclone config` to setup the remote with the same name, as the one you entered in `folders.txt`. For dropbox, follow this [guide](https://rclone.org/dropbox/#get-your-own-dropbox-app-id).
-8. Backup your save-games if you haven't already!
-9. Test by doing a initial sync: `cd .. && ./SyncSaveGames.sh`.
+3. Run `${HOME}/.bin/rclone config` to setup the remotes you need. For dropbox, follow this [guide](https://rclone.org/dropbox/#get-your-own-dropbox-app-id).
+4. Edit ...
 
 # Notes
 

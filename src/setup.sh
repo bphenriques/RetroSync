@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 SCRIPT_PATH="$(dirname "$0")"
 
 # shellcheck disable=SC1091

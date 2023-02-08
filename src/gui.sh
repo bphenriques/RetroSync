@@ -1,17 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # shellcheck disable=SC1091
 
 SCRIPT_PATH="$(dirname "$0")"
 
-source "${SCRIPT_PATH}"/SyncSaveGames/lib/util.sh
-source "${SCRIPT_PATH}"/SyncSaveGames/lib/config.sh
+source "${SCRIPT_PATH}"/lib/util.sh
+source "${SCRIPT_PATH}"/lib/config.sh
 
-export DEBUG=0
-
-readonly SYNC_ALL_BIN="${SCRIPT_PATH}/RetroSync-SyncAll.sh"
-readonly SYNC_BIN="${SCRIPT_PATH}/SyncSaveGames/sync.sh"
-readonly SOLVE_CONFLICTS_BIN="${SCRIPT_PATH}/SyncSaveGames/solve-conflicts.sh"
-readonly HEALTH_BIN="${SCRIPT_PATH}/SyncSaveGames/health.sh"
+readonly SYNC_ALL_BIN="${SCRIPT_PATH}/sync-all.sh"
+readonly SYNC_BIN="${SCRIPT_PATH}/sync.sh"
+readonly SOLVE_CONFLICTS_BIN="${SCRIPT_PATH}/fix-conflicts.sh"
+readonly HEALTH_BIN="${SCRIPT_PATH}/health.sh"
 
 # Constants
 readonly BACKTITLE="Retro Sync"
@@ -79,7 +77,7 @@ Sync() {
 
     selectedId=$("${selectId[@]}" "${syncOpts[@]}" 2>&1 >/dev/tty1) || MainMenu
     while read -r id from to filter conflict_strategy; do
-      "${SYNC_BIN}" "${id}" "${from}" "${to}" "${filter}" "${conflict_strategy:-most-recent}" |
+      "${SYNC_BIN}" "${id}" "${from}" "${to}" "${filter}" "${conflict_strategy:-RETROSYNC[defaultMergeStrategy]}" |
         dialog --backtitle "${BACKTITLE}" --title "Syncing ${id}..." --progressbox 15 "${width}" >/dev/tty1
       sleep 3
     done <<<"${selectedId} ${idConfig["${selectedId}"]}"
