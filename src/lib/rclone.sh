@@ -4,19 +4,20 @@ if [ -n "$__RETRO_SYNC_RCLONE_SOURCED" ]; then return; fi
 __RETRO_SYNC_RCLONE_SOURCED=1
 
 rclone::install() {
-  local arch
-  arch="$(uname -m)"
-  case "$arch" in
-    aarch64)  RCLONE_URL="https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-linux-arm.zip"    ;;
-    x86_64)   RCLONE_URL="https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-linux-amd64.zip"  ;;
-    *)
-      printf "Failure: unsupported %s architecture" "${arch}"
-      return 1
-      ;;
-  esac
-
   if [ ! -f "${RETROSYNC[rcloneBin]}" ]; then
     printf "rclone is not installed! Downloading and installing...\n"
+
+    local arch
+    arch="$(uname -m)"
+    case "$arch" in
+      aarch64)  RCLONE_URL="https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-linux-arm.zip"    ;;
+      x86_64)   RCLONE_URL="https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-linux-amd64.zip"  ;;
+      *)
+        printf "Failure: unsupported %s architecture" "${arch}"
+        return 1
+        ;;
+    esac
+
     local install_dir
     install_dir=$(mktemp -d)
     mkdir -p "${install_dir}"
@@ -30,8 +31,6 @@ rclone::install() {
   else
     printf "rclone is already installed at %s!\n" "${RETROSYNC[rcloneBin]}"
   fi
-
-  return 0
 }
 
 rclone::bisync() {

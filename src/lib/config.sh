@@ -11,8 +11,6 @@ readonly XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 declare -A RETROSYNC
 
 config::default() {
-  [[ ! -f "${RETROSYNC[userCfg]}" ]] && mkdir -p "${RETROSYNC[userCfgDir]}"
-
   RETROSYNC=()
   RETROSYNC[installDir]="${HOME}/.bin/retrosync"
   RETROSYNC[userCfgDir]="${XDG_CONFIG_HOME}/retrosync"
@@ -38,14 +36,15 @@ config::load() {
     exit 1
   fi
 
-  # Remove any previous values and recomputes defaults and any overridden key within the file
-  config::resetDefault
-
   while read line; do
     local option="$(echo "${line}" | sed -e 's/[[:space:]]*=.*$//')"
     local value="$(echo "${line}" | sed -e 's/^.*=[[:space:]]*//')"
     RETROSYNC["${option}"]="${value}"
   done < <(grep -E '^[a-zA-Z]' "${config}")
+}
+
+config::locations() {
+  grep -E '^[a-zA-Z]' "${RETROSYNC[locationsCfg]}"
 }
 
 config::last_sync_file() {
@@ -65,6 +64,21 @@ config::last_sync_ts() {
 }
 
 config::default
+
+# Ensure this exists
+if [[ ! -f "${RETROSYNC[userCfg]}" ]]; then
+  mkdir -p "${RETROSYNC[userCfgDir]}"
+  touch "${RETROSYNC[userCfg]}"
+fi
+
+# Ensure this exists
+if [[ ! -f "${RETROSYNC[locationsCfg]}" ]]; then
+  touch "${RETROSYNC[locationsCfg]}"
+fi
+
+# Ensure this exists
+mkdir -p "${RETROSYNC[rcloneFilterDir]}"
+
 config::load "${RETROSYNC[userCfg]}"
 
 

@@ -3,13 +3,13 @@
 
 SCRIPT_PATH="$(dirname "$0")"
 
-source "${SCRIPT_PATH}"/lib/util.sh
 source "${SCRIPT_PATH}"/lib/config.sh
+source "${SCRIPT_PATH}"/lib/util.sh
 
 readonly SYNC_ALL_BIN="${SCRIPT_PATH}/sync-all.sh"
 readonly SYNC_BIN="${SCRIPT_PATH}/sync.sh"
 readonly SOLVE_CONFLICTS_BIN="${SCRIPT_PATH}/fix-conflicts.sh"
-readonly HEALTH_BIN="${SCRIPT_PATH}/health.sh"
+readonly HEALTH_BIN="${SCRIPT_PATH}/doctor.sh"
 
 # Constants
 readonly BACKTITLE="Retro Sync"
@@ -54,8 +54,8 @@ Sync() {
   declare -A idConfig=()
   while read -r id from to filter conflict_strategy; do
     # TODO: Does this work if 'from' or 'to' contain space?
-    idConfig["$id"]="${from} ${to} ${filter} ${conflict_strategy:-manual}"
-  done <<<"$( grep -E '^[a-zA-Z]' "${SCRIPT_PATH}/SyncSaveGames/config/folders.txt")"
+    idConfig["$id"]="${from} ${to} ${filter} ${conflict_strategy:-"${RETROSYNC[defaultMergeStrategy]}"}"
+  done <<<"$(config::locations)"
 
   while true; do
     # Generate option list
@@ -77,7 +77,7 @@ Sync() {
 
     selectedId=$("${selectId[@]}" "${syncOpts[@]}" 2>&1 >/dev/tty1) || MainMenu
     while read -r id from to filter conflict_strategy; do
-      "${SYNC_BIN}" "${id}" "${from}" "${to}" "${filter}" "${conflict_strategy:-RETROSYNC[defaultMergeStrategy]}" |
+      "${SYNC_BIN}" "${id}" "${from}" "${to}" "${filter}" "${conflict_strategy:-"${RETROSYNC[defaultMergeStrategy]}"}" |
         dialog --backtitle "${BACKTITLE}" --title "Syncing ${id}..." --progressbox 15 "${width}" >/dev/tty1
       sleep 3
     done <<<"${selectedId} ${idConfig["${selectedId}"]}"
@@ -95,7 +95,7 @@ ListConflicts() {
       # Some characters are reserved - ':' is a safe bet.
       conflicts["${id}:${rel}"]="${file_path1}"
     done < <(find "${from}" -name '*..path1' -print0)
-  done <<<"$( grep -E '^[a-zA-Z]' "${SCRIPT_PATH}/SyncSaveGames/config/folders.txt")"
+  done <<<"$(config::locations)"
 
   while true; do
     if [ "${#conflicts[@]}" -gt 0 ]; then
@@ -208,12 +208,12 @@ MainMenu() {
       --menu "Please make your selection" "${height}" "${width}" 15)
 
     case "$("${selectMenu[@]}" "${menuOpts[@]}" 2>&1 >/dev/tty1)" in
-      1) SyncAll ;;
-      2) Sync ;;
-      3) ListConflicts ;;
-      4) ListConfig ;;
-      5) Health ;;
-      6) ExitMenu ;;
+      1) SyncAll        ;;
+      2) Sync           ;;
+      3) ListConflicts  ;;
+      4) ListConfig     ;;
+      5) Health         ;;
+      6) ExitMenu       ;;
     esac
   done
 }

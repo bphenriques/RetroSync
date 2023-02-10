@@ -10,7 +10,7 @@ key=value
 key2=some other value with spaces
 EOF
 
-config::reload "${test_file}"
+config::load "${test_file}"
 [[ $? = 0 ]] || exit $?
 
 [[ "${RETROSYNC[key]}" == "value" ]] || printf "Wrong value in key" && exit 1
@@ -20,7 +20,7 @@ cat <<EOF > "${test_file}"
 other=random
 EOF
 
-config::reload "${test_file}"
+config::load "${test_file}"
 [[ "${RETROSYNC[key]}" == "" ]] || printf "key was not deleted after reloading" && exit 1
 [[ "${RETROSYNC[other]}" == "random" ]] || printf "Wrong value in other" && exit 1
 

@@ -1,48 +1,78 @@
 #!/usr/bin/env bash
 SCRIPT_PATH="$(dirname "$0")"
 
+# shellcheck disable=SC1091
+source "${SCRIPT_PATH}"/lib/config.sh
+
+any_failure=0
+
 # TODO: Check Bash greater than 4
 
 if command -v dialog >/dev/null; then
-  println '[OK] - dialog binary!\n'
+  printf '[OK] dialog is present for the GUI app\n'
 else
-  printf '[WARN] dialog binary not available!\n'
+  printf '[WARN] dialog binary not available which is required for the GUI interface!\n'
 fi
 
-if [ -f "${SCRIPT_PATH}"/config/folders.txt ]; then
-  printf "[OK] configuration file exists\n" "${id}"
+if [ -f "${RETROSYNC[userCfg]}" ]; then
+  printf "[OK] configuration file exists: %s\n" "${RETROSYNC[userCfg]}"
 else
-  printf "[FAIL] configuration file missing: %s\n" "${id}" "${SCRIPT_PATH}"/config/folders.txt
+  any_failure=1
+  printf "[FAIL] configuration file missing: %s\n" "${RETROSYNC[userCfg]}"
 fi
 
-if [[ -z "$(rclone listremotes 2>/dev/null)" ]]; then
-  printf "[OK] rclone remote is set" "${id}"
+if [ -f "${RETROSYNC[locationsCfg]}" ]; then
+  printf "[OK] locations file exists: %s\n" "${RETROSYNC[locationsCfg]}"
 else
-  printf "[OK] rclone remote not set\n" "${id}"
+  any_failure=1
+  printf "[FAIL] locations file missing: %s\n" "${RETROSYNC[userCfg]}"
 fi
+
+# TODO: Check list remotes if the locations.txt is not empty
+
+if [[ -f "${RETROSYNC[rcloneBin]}" ]]; then
+  printf "[OK] rclone is installed: %s\n" "${RETROSYNC[rcloneBin]}"
+else
+  any_failure=1
+  printf "[FAIL] rclone is not installed: %s\n" "${RETROSYNC[rcloneBin]}"
+fi
+
+# TODO: Check if there are not duplicate ids in the locations.txt file
+# TODO: Check if the remote is valid for each config
 
 while read -r id from to filter conflict_strategy; do
-  if [ -d "${from}" ]; then
-    printf "[OK] %s: path1 directory\n" "${id}"
-  else
+  location_fail=0
+
+  if [ ! -d "${from}" ]; then
+    location_fail=1
+    any_failure=1
     printf "[FAIL] %s: path1 directory missing: ${from}\n" "${id}" "${from}"
   fi
 
-  if [ -f "${SCRIPT_PATH}/filters/${filter}" ]; then
-    printf "[OK] %s: filter\n" "${id}"
-  else
+  if [ ! -f "${RETROSYNC[rcloneFilterDir]}/${filter}" ]; then
+    location_fail=1
+    any_failure=1
     printf "[FAIL] %s: filter missing: %s\n" "${id}" "${filter}"
   fi
 
   case "${conflict_strategy}" in
-    manual)       printf "[OK] %s: conflict strategy\n" "${id}" ;;
-    most-recent)  printf "[OK] %s: conflict strategy\n" "${id}" ;;
-    keep-left)    printf "[OK] %s: conflict strategy\n" "${id}" ;;
-    keep-right)   printf "[OK] %s: conflict strategy\n" "${id}" ;;
-    "")           printf "[OK] %s: conflict strategy. Using default.\n" "${id}" ;;
-    *)            printf "[FAIL] %s: unrecognized conflict strategy: %s\n" "${id}" "${conflict_strategy}";;
+    manual|most-recent|keep-left|keep-right|"")       ;;
+    *)
+      location_fail=1
+      any_failure=1
+      printf "[FAIL] %s: unrecognized conflict strategy: %s\n" "${id}" "${conflict_strategy}"
+      ;;
   esac
-done <<< "$(grep -E '^[a-zA-Z]' "${SCRIPT_PATH}"/config/folders.txt)"
+
+  if [[ "${location_fail}" == 0 ]]; then
+    printf "[OK] %s\n" "${id}"
+  fi
+done <<< "$(config::locations)"
+
+if [[ "${any_failure}" == 0 ]]; then
+  printf "\n"
+  printf "[OK] Everything is ok!"
+fi
 
 # Check retroarch settings..
 # echo "   Setting 'savefiles_in_content_dir' 'savestates_in_content_dir' to true .. (${build_dir} to ${host}:${remote_dest})"
