@@ -164,7 +164,11 @@ SolveFileConflict() {
   esac
 }
 
-ListConfig() {
+Configure() {
+  # What do I want to get out of this screen...
+  # 1. Set default conflict resolution
+  # 2. Enable/Disable...
+  # 3. RetroArch - Setup
   echo "Hello"
 }
 
@@ -177,7 +181,7 @@ Health() {
 }
 
 MainMenu() {
-  local menuOpts=(1 "Sync All" 2 "Sync..." 3 "Solve Conflicts..." 4 "Config..." 5 "Verify Installation" 6 "Exit")
+  local menuOpts=(1 "Sync All" 2 "Sync..." 3 "Solve Conflicts..." 4 "Configure..." 5 "Doctor" 6 "Exit")
   while true; do
     local selectMenu=(dialog
       --backtitle "${BACKTITLE}"
@@ -193,7 +197,7 @@ MainMenu() {
       1) SyncAll        ;;
       2) Sync           ;;
       3) ListConflicts  ;;
-      4) ListConfig     ;;
+      4) Configure     ;;
       5) Health         ;;
       6) ExitMenu       ;;
     esac
