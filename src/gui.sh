@@ -14,40 +14,21 @@ readonly HEALTH_BIN="${SCRIPT_PATH}/doctor.sh"
 # Constants
 readonly BACKTITLE="Retro Sync"
 
-sudo chmod 666 /dev/tty1
-printf "\033c" >/dev/tty1
-
-# hide cursor
-printf "\e[?25l" >/dev/tty1
-dialog --clear
-
-height="15"
-width="55"
-if test ! -z "$(cat /home/ark/.config/.DEVICE | grep RG503 | tr -d '\0')"; then
-  height="20"
-  width="60"
+if [ "$#" -ne 2 ]; then
+  fail "Illegal number of parameters: ./gui.sh <height> <width>"
 fi
 
-export TERM=linux
-export XDG_RUNTIME_DIR=/run/user/$UID/
+height="${1}"
+width="${2}"
 
-printf "\033c" >/dev/tty1
+dialog --clear
 
 ExitMenu() {
-  printf "\033c" >/dev/tty1
-  pgrep -f oga_controls | sudo xargs kill -9
   exit 0
 }
 
-#
-# Joystick controls
-#
-# only one instance
-CONTROLS="/opt/wifi/oga_controls"
-sudo $CONTROLS test-ui.sh rg552 &
-
 SyncAll() {
-  "${SYNC_ALL_BIN}" | dialog --backtitle "${BACKTITLE}" --title "Sync All" --sleep 3 --progressbox 16 "${width}" >/dev/tty1
+  "${SYNC_ALL_BIN}" | dialog --backtitle "${BACKTITLE}" --title "Sync All" --sleep 3 --progressbox "${height}" "${width}" >/dev/tty1
 }
 
 Sync() {
@@ -78,7 +59,7 @@ Sync() {
     selectedId=$("${selectId[@]}" "${syncOpts[@]}" 2>&1 >/dev/tty1) || MainMenu
     while read -r id from to filter conflict_strategy; do
       "${SYNC_BIN}" "${id}" "${from}" "${to}" "${filter}" "${conflict_strategy:-"${RETROSYNC[defaultMergeStrategy]}"}" |
-        dialog --backtitle "${BACKTITLE}" --title "Syncing ${id}..." --progressbox 15 "${width}" >/dev/tty1
+        dialog --backtitle "${BACKTITLE}" --title "Syncing ${id}..." --progressbox "${height}" "${width}" >/dev/tty1
       sleep 3
     done <<<"${selectedId} ${idConfig["${selectedId}"]}"
   done
@@ -124,7 +105,7 @@ ListConflicts() {
         unset 'conflicts["${selectedConflict}"]'
       fi
     else
-      dialog --backtitle "${BACKTITLE}" --infobox "No conflicts!" 3 ${width} >/dev/tty1
+      dialog --backtitle "${BACKTITLE}" --infobox "No conflicts!" 5 ${width} >/dev/tty1
       sleep 3
       break
     fi
@@ -177,7 +158,7 @@ SolveFileConflict() {
       printf "Solved"
       ;;
     *)
-      dialog --backtitle "${BACKTITLE}" --infobox "ERROR: Unknown resolution $resolution" 15 "${width}" >/dev/tty1
+      dialog --backtitle "${BACKTITLE}" --infobox "ERROR: Unknown resolution $resolution" 0 "${width}" >/dev/tty1
       sleep 3
       ;;
   esac
@@ -190,7 +171,7 @@ ListConfig() {
 Health() {
   local health_indication="$(mktemp)"
   "${HEALTH_BIN}" > "${health_indication}"
-  dialog --backtitle "${BACKTITLE}" --exit-label "OK" --textbox "${health_indication}" 16 ${width} >/dev/tty1
+  dialog --backtitle "${BACKTITLE}" --exit-label "OK" --textbox "${health_indication}" "${height}" ${width} >/dev/tty1
   rm "${health_indication}"
 }
 
