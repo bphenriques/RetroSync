@@ -36,9 +36,10 @@ config::load() {
     exit 1
   fi
 
-  while read line; do
-    local option="$(echo "${line}" | sed -e 's/[[:space:]]*=.*$//')"
-    local value="$(echo "${line}" | sed -e 's/^.*=[[:space:]]*//')"
+  while read -r line; do
+    local option value
+    option="$(echo "${line}" | sed -e 's/[[:space:]]*=.*$//')"
+    value="$(echo "${line}" | sed -e 's/^.*=[[:space:]]*//')"
     RETROSYNC["${option}"]="${value}"
   done < <(grep -E '^[a-zA-Z]' "${config}")
 }

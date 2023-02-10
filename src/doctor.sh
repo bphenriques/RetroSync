@@ -52,7 +52,7 @@ while read -r id from to filter conflict_strategy; do
   if [ ! -f "${RETROSYNC[rcloneFilterDir]}/${filter}" ]; then
     location_fail=1
     any_failure=1
-    printf "[FAIL] %s: filter missing: %s\n" "${id}" "${filter}"
+    printf "[FAIL] %s: filter missing: %s\n" "${id}" "${RETROSYNC[rcloneFilterDir]}/${filter}"
   fi
 
   case "${conflict_strategy}" in

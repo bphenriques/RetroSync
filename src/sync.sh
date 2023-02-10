@@ -17,16 +17,13 @@ to="$3"
 filter="$4"
 on_conflict="$5"
 
-filter_file="${SCRIPT_PATH}/filters/${filter}"
+filter_file="${RETROSYNC[rcloneFilterDir]}/${filter}"
 
 [[ ! -d "${from}" ]] && fail "The from folder %s does not exist!" "${from}"
 [[ ! -f "${filter_file}" ]] && fail "The filter file %s does not exist!" "${filter_file}"
 case "${on_conflict}" in
-  manual)       ;;
-  most-recent)  ;;
-  keep-left)    ;;
-  keep-right)   ;;
-  *)            fail "Unrecognized conflict strategy: %s" "${on_conflict}";;
+  manual|most-recent|keep-left|keep-right)  ;;
+  *)                                        fail "Unrecognized conflict strategy: %s" "${on_conflict}";;
 esac
 
 printf "Id: %s\n" "${id}"
@@ -47,7 +44,7 @@ if [ -f "${marker_file}" ]; then
   debug "Syncing %s .." "${id}"
   if rclone::bisync "${from}" "${to}" "${filter_file}" 0; then
     touch "${marker_file}"
-    "{SCRIPT_PATH}"/fix-dir-conflicts.sh "${id}" "${from}" "${to}" "${filter_file}" "${on_conflict}"
+    "${SCRIPT_PATH}"/fix-dir-conflicts.sh "${id}" "${from}" "${to}" "${filter_file}" "${on_conflict}"
   else
     error "Failed to sync %s! See %s for more details" "${id}" "${RETROSYNC[logFile]}"
   fi

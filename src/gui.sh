@@ -105,7 +105,7 @@ ListConflicts() {
         unset 'conflicts["${selectedConflict}"]'
       fi
     else
-      dialog --backtitle "${BACKTITLE}" --infobox "No conflicts!" 5 ${width} >/dev/tty1
+      dialog --backtitle "${BACKTITLE}" --infobox "No conflicts!" 5 "${width}" >/dev/tty1
       sleep 3
       break
     fi
@@ -169,9 +169,10 @@ ListConfig() {
 }
 
 Health() {
-  local health_indication="$(mktemp)"
+  local health_indication
+  health_indication="$(mktemp)"
   "${HEALTH_BIN}" > "${health_indication}"
-  dialog --backtitle "${BACKTITLE}" --exit-label "OK" --textbox "${health_indication}" "${height}" ${width} >/dev/tty1
+  dialog --backtitle "${BACKTITLE}" --exit-label "OK" --textbox "${health_indication}" "${height}" "${width}" >/dev/tty1
   rm "${health_indication}"
 }
 
