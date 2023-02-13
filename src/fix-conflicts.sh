@@ -3,7 +3,6 @@
 SCRIPT_PATH="$(dirname "$0")"
 
 source "${SCRIPT_PATH}"/lib/util.sh
-source "${SCRIPT_PATH}"/lib/config.sh
 source "${SCRIPT_PATH}"/lib/merge_strategies.sh
 
 if [ "$#" -ne 2 ]; then

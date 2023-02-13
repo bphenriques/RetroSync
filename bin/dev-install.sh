@@ -18,7 +18,7 @@ if [[ ! -d "${SCRIPT_PATH}/../device/${OS}" ]]; then
   exit 1
 fi
 
-if ! ssh "$HOST" "test -d  ${INSTALL_DIR}"; then
+if ! ssh "$HOST" "test -d \"${INSTALL_DIR}\""; then
   printf "The installation directory does not exist: %s" "${INSTALL_DIR}"
   exit 1
 fi

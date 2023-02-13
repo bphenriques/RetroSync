@@ -13,6 +13,8 @@ if [[ ! -f "${RETROSYNC[userCfg]}" ]]; then
   touch "${RETROSYNC[userCfg]}"
 fi
 
+config::set deviceId "$(hostname -s)"
+
 # Test
 
 # echo "   Setting 'savefiles_in_content_dir' 'savestates_in_content_dir' to true .. (${build_dir} to ${host}:${remote_dest})"

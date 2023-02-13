@@ -12,7 +12,8 @@ declare -A RETROSYNC
 
 config::default() {
   RETROSYNC=()
-  RETROSYNC[installDir]="${HOME}/.bin/retrosync"
+
+  # Stable defaults
   RETROSYNC[userCfgDir]="${XDG_CONFIG_HOME}/retrosync"
   RETROSYNC[userCfg]="${RETROSYNC[userCfgDir]}/retrosync.cfg"
   RETROSYNC[locationsCfg]="${RETROSYNC[userCfgDir]}/locations.txt"
@@ -21,8 +22,8 @@ config::default() {
   RETROSYNC[rcloneBin]="${HOME}/.bin/rclone"
   RETROSYNC[rcloneFilterDir]="${RETROSYNC[userCfgDir]}/filters"
   RETROSYNC[maxDeleteProtectionPercent]=100 # Defaults to 50 in rclone
-  RETROSYNC[debug]=0
   RETROSYNC[defaultMergeStrategy]=most-recent
+  RETROSYNC[debug]=0
 }
 
 # Load configuration to a global  array (Only Bash 4.3 supports passing arrays as argument and then using local -n)
@@ -46,6 +47,22 @@ config::load() {
 
 config::locations() {
   grep -E '^[a-zA-Z]' "${RETROSYNC[locationsCfg]}"
+}
+
+config::set() {
+  local key="${1}"
+  local value="${2}"
+  local keyValue="${key}=${value}"
+
+  RETROSYNC["${key}"]="${value}"
+
+  if [[ ! -f "${RETROSYNC[userCfg]}" ]]; then
+    echo "${keyValue}" >> "${RETROSYNC[userCfg]}"
+  elif grep -E "^[[:space:]]*${key}[[:space:]]*=.*$" "${RETROSYNC[userCfg]}" >/dev/null; then
+    sed -iE "s/^[[:space:]]*${key}[[:space:]]*=.*$/${keyValue}/" "${RETROSYNC[userCfg]}"
+  else
+    echo "${keyValue}" >> "${RETROSYNC[userCfg]}"
+  fi
 }
 
 config::last_sync_file() {
