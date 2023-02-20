@@ -2,6 +2,9 @@
 
 set -e
 
+echo "Sorry, not supported, so not advisable yet."
+exit 0
+
 readonly PROJECT_NAME=RetroSync
 readonly REPO_NAME=RetroSync
 readonly GITHUB_BASE="https://github.com/bphenriques/${REPO_NAME}"

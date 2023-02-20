@@ -1,0 +1,5 @@
+{
+  "from": "/roms2/gba",
+  "to": "dropbox:roms/gba",
+  "filter": "retroarch-default.txt"
+}

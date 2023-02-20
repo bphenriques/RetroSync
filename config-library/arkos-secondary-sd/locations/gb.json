@@ -1,0 +1,5 @@
+{
+  "from": "/roms2/gb",
+  "to": "dropbox:roms/gb",
+  "filter": "retroarch-default.txt"
+}

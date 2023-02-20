@@ -1,0 +1,5 @@
+{
+  "from": "/roms2/bios/dc",
+  "to": "dropbox:bios/dc",
+  "filter": "retroarch-default.txt"
+}

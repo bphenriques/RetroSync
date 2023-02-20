@@ -1,0 +1,5 @@
+{
+  "from": "/roms2/arcade",
+  "to": "dropbox:roms/arcade",
+  "filter": "retroarch-default.txt"
+}

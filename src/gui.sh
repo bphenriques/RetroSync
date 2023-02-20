@@ -5,6 +5,7 @@ SCRIPT_PATH="$(dirname "$0")"
 
 # scripts
 source "${SCRIPT_PATH}"/lib/config.sh
+source "${SCRIPT_PATH}"/lib/retroarch.sh
 source "${SCRIPT_PATH}"/lib/util.sh
 
 # gui

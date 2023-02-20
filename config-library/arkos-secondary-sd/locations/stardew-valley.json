@@ -1,0 +1,5 @@
+{
+  "from": "/roms2/ports/stardewvalley/savedata/Saves",
+  "to": "dropbox:modern/stardew_valley",
+  "filter": "stardew-valley.txt"
+}

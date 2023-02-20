@@ -1,0 +1,5 @@
+{
+  "from": "/roms2/dreamcast",
+  "to": "dropbox:roms/dreamcast",
+  "filter": "retroarch-default.txt"
+}

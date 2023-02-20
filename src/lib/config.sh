@@ -16,7 +16,7 @@ config::default() {
   # Stable defaults
   RETROSYNC[userCfgDir]="${XDG_CONFIG_HOME}/retrosync"
   RETROSYNC[userCfg]="${RETROSYNC[userCfgDir]}/retrosync.cfg"
-  RETROSYNC[locationsCfg]="${RETROSYNC[userCfgDir]}/locations.txt"
+  RETROSYNC[syncLocations]="${RETROSYNC[userCfgDir]}/locations"
   RETROSYNC[stateDir]="${XDG_STATE_HOME}/retrosync"
   RETROSYNC[logFile]="$(test -d /dev/shm/ && printf "/dev/shm/retrosync.log" || printf "/tmp/retrosync.log")" # Store in RAM if possible
   RETROSYNC[rcloneBin]="${HOME}/.bin/rclone"
@@ -45,10 +45,6 @@ config::load() {
   done < <(grep -E '^[a-zA-Z]' "${config}")
 }
 
-config::locations() {
-  grep -E '^[a-zA-Z]' "${RETROSYNC[locationsCfg]}"
-}
-
 config::set() {
   local key="${1}"
   local value="${2}"
@@ -56,9 +52,7 @@ config::set() {
 
   RETROSYNC["${key}"]="${value}"
 
-  if [[ ! -f "${RETROSYNC[userCfg]}" ]]; then
-    echo "${keyValue}" >> "${RETROSYNC[userCfg]}"
-  elif grep -E "^[[:space:]]*${key}[[:space:]]*=.*$" "${RETROSYNC[userCfg]}" >/dev/null; then
+  if grep -E "^[[:space:]]*${key}[[:space:]]*=.*$" "${RETROSYNC[userCfg]}" >/dev/null; then
     sed -iE "s/^[[:space:]]*${key}[[:space:]]*=.*$/${keyValue}/" "${RETROSYNC[userCfg]}"
   else
     echo "${keyValue}" >> "${RETROSYNC[userCfg]}"
@@ -81,6 +75,34 @@ config::last_sync_ts() {
   fi
 }
 
+config::location_ids() {
+  find "${RETROSYNC[syncLocations]}" -type f -name '*.json' -exec basename {} .json \; | sort --version-sort
+}
+
+# Usage
+#  while IFS=$'\t' read -r id from to filter on_conflict; do
+#    echo "${id}" "${from}" "${to}" "${filter}" "${on_conflict}"
+#  done
+config::location_config() {
+  local id="$1"
+  config::parse_sync_location "${RETROSYNC[syncLocations]}/${id}".json
+}
+
+config::full_sync_config() {
+  for id in $(config::location_ids); do
+    config::location_config "${id}"
+  done
+}
+
+config::parse_sync_location() {
+  local file="$1"
+  local id
+  id="$(basename "${file}" .json)"
+  jq --arg id "${id}" --arg on_conflict "${RETROSYNC[defaultMergeStrategy]}" -c --raw-output \
+    '[(.id | $id), .from, .to, .filter, (.on_conflict | $on_conflict)] | @tsv' \
+    "${file}"
+}
+
 config::default
 
 # Ensure this exists
@@ -90,9 +112,7 @@ if [[ ! -f "${RETROSYNC[userCfg]}" ]]; then
 fi
 
 # Ensure this exists
-if [[ ! -f "${RETROSYNC[locationsCfg]}" ]]; then
-  touch "${RETROSYNC[locationsCfg]}"
-fi
+mkdir -p "${RETROSYNC[syncLocations]}"
 
 # Ensure this exists
 mkdir -p "${RETROSYNC[rcloneFilterDir]}"

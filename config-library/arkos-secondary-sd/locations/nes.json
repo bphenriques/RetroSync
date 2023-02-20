@@ -1,0 +1,5 @@
+{
+  "from": "/roms2/nes",
+  "to": "dropbox:roms/nes",
+  "filter": "retroarch-default.txt"
+}

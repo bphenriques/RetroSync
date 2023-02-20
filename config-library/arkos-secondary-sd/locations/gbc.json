@@ -1,0 +1,5 @@
+{
+  "from": "/roms2/gbc",
+  "to": "dropbox:roms/gbc",
+  "filter": "retroarch-default.txt"
+}

@@ -1,0 +1,5 @@
+{
+  "from": "/roms2/nds",
+  "to": "dropbox:roms/nds",
+  "filter": "retroarch-default.txt"
+}

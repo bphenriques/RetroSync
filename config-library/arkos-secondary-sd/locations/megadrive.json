@@ -1,0 +1,5 @@
+{
+  "from": "/roms2/megadrive",
+  "to": "dropbox:roms/megadrive",
+  "filter": "retroarch-default.txt"
+}

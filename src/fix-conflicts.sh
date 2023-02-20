@@ -14,13 +14,12 @@ file_path1="$1"
 strategy="$2"
 
 file_path2="$(echo -n "$file_path1" | sed 's/\.\.path1/\.\.path2/g')"
-final_file="$(echo -n "$file_path1" | sed 's/\.\.path1//g')"
-
 if [ ! -f "${file_path2}" ]; then
   warn "Can't find '..path2' counter-part of ${file_path1}!"
   exit 2
 fi
 
+final_file="$(echo -n "$file_path1" | sed 's/\.\.path1//g')"
 printf "Found conflict with %s!\n" "${final_file}"
 case ${strategy} in
   manual)       debug "Manually solve conflict" ;;

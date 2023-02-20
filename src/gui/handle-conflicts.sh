@@ -9,12 +9,12 @@ ListConflicts() {
   while read -r id from to filter conflict_strategy; do
     fromDir["${id}"]="${from}"
 
-    while IFS=  read -r -d $'\0' file_path1; do
+    while IFS=$'\t' read -r -d $'\0' file_path1; do
       rel="$(realpath -m --relative-to="${from}" "${file_path1}")"
       # Some characters are reserved - ':' is a safe bet.
       conflicts["${id}:${rel}"]="${file_path1}"
     done < <(find "${from}" -name '*..path1' -print0)
-  done <<<"$(config::locations)"
+  done <<<"$(config::full_sync_config)"
 
   while true; do
     if [ "${#conflicts[@]}" -gt 0 ]; then
@@ -43,7 +43,7 @@ ListConflicts() {
         unset 'conflicts["${selectedConflict}"]'
       fi
     else
-      dialog --backtitle "${BACKTITLE}" --infobox "No conflicts!" 5 "${width}" >/dev/tty1
+      dialog --backtitle "${BACKTITLE}" --infobox "No conflicts!" 3 "${width}" >/dev/tty1
       sleep 3
       break
     fi
