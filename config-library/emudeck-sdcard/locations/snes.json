@@ -1,0 +1,5 @@
+{
+  "from": "/var/run/media/mmcblk0p1/Emulation/roms/snes",
+  "to": "dropbox:roms/snes",
+  "filter": "retroarch-default.txt"
+}

@@ -19,7 +19,7 @@ config::default() {
   RETROSYNC[syncLocations]="${RETROSYNC[userCfgDir]}/locations"
   RETROSYNC[stateDir]="${XDG_STATE_HOME}/retrosync"
   RETROSYNC[logFile]="$(test -d /dev/shm/ && printf "/dev/shm/retrosync.log" || printf "/tmp/retrosync.log")" # Store in RAM if possible
-  RETROSYNC[rcloneBin]="${HOME}/.bin/rclone"
+  RETROSYNC[rcloneBin]="rclone"
   RETROSYNC[rcloneFilterDir]="${RETROSYNC[userCfgDir]}/filters"
   RETROSYNC[maxDeleteProtectionPercent]=100 # Defaults to 50 in rclone
   RETROSYNC[defaultMergeStrategy]=most-recent

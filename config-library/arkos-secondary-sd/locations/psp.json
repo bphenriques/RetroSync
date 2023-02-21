@@ -1,5 +1,0 @@
-{
-  "from": "/roms2/psp",
-  "to": "dropbox:roms/psp",
-  "filter": "retroarch-default.txt"
-}

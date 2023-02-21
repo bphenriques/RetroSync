@@ -1,0 +1,5 @@
+{
+  "from": "/roms2/psp/ppsspp/PSP/SAVEDATA",
+  "to": "dropbox:roms/psp/saves",
+  "filter": "everything.txt"
+}

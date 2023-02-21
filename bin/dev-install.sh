@@ -25,15 +25,18 @@ fi
 
 echo "Performing remote installation.."
 echo "   Deleting existing installation .."
-ssh "${HOST}" "rm -r ${INSTALL_DIR}/RetroSync*"
+ssh "${HOST}" "rm -rf ${INSTALL_DIR}/RetroSync*"
 
 echo "   Copying current version .."
 scp -r "${SCRIPT_PATH}/../src" "${HOST}:${INSTALL_DIR}"/RetroSync
 
 printf "   Copying custom %s files .." "${OS}"
-find "./device/${OS}/" -type f -maxdepth 1 -name "*.sh" -print0 | xargs -0 -I{} scp "{}" "${HOST}:${INSTALL_DIR}"
+find "./device/${OS}/extra-bin/" -type f -maxdepth 1 -name "*.sh" -print0 | xargs -0 -I{} scp "{}" "${HOST}:${INSTALL_DIR}"
 
 echo "Remotely executing setup.."
 ssh "${HOST}" "${INSTALL_DIR}/RetroSync/setup.sh"
+
+scp "${SCRIPT_PATH}/../device/${OS}/setup.sh" "${HOST}":/tmp/retrosync-setup.sh
+ssh "${HOST}" "chmod +x /tmp/retrosync-setup.sh && /tmp/retrosync-setup.sh && rm /tmp/retrosync-setup.sh"
 
 echo "Done!"

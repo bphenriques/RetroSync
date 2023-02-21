@@ -1,0 +1,5 @@
+{
+  "from": "/var/run/media/mmcblk0p1/Emulation/roms/gbc",
+  "to": "dropbox:roms/gbc",
+  "filter": "retroarch-default.txt"
+}

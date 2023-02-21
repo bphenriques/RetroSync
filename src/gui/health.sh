@@ -7,6 +7,6 @@ Health() {
   local health_indication
   health_indication="$(mktemp)"
   "${HEALTH_BIN}" > "${health_indication}"
-  dialog --backtitle "${BACKTITLE}" --exit-label "OK" --textbox "${health_indication}" "${height}" "${width}" >/dev/tty1
+  dialog --backtitle "${BACKTITLE}" --exit-label "OK" --textbox "${health_indication}" "${height}" "${width}" >"${tty_fd}"
   rm "${health_indication}"
 }

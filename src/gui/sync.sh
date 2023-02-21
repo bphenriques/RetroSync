@@ -13,18 +13,24 @@ Sync() {
       syncOpts+=("${id}" "${last_sync}")
     done
 
-    local selectId=(dialog
-      --backtitle "${BACKTITLE}"
-      --no-collapse
-      --clear
-      --title "ID              Last Sync"
-      --ok-label "Sync"
-      --cancel-label "Back"
-      --menu "Select:" "${height}" "${width}" 15)
+    if [ "${#syncOpts[@]}" -gt 0 ]; then
+      local selectId=(dialog
+        --backtitle "${BACKTITLE}"
+        --no-collapse
+        --clear
+        --title "ID              Last Sync"
+        --ok-label "Sync"
+        --cancel-label "Back"
+        --menu "Select:" "${height}" "${width}" 15)
 
-    selectedId=$("${selectId[@]}" "${syncOpts[@]}" 2>&1 >/dev/tty1) || MainMenu
-    "${SYNC_BIN}" "${selectedId}" |
-      dialog --backtitle "${BACKTITLE}" --title "Syncing ${selectedId}..." --progressbox "${height}" "${width}" >/dev/tty1
-    sleep 3
+      selectedId=$("${selectId[@]}" "${syncOpts[@]}" 2>&1 >"${tty_fd}") || MainMenu
+      "${SYNC_BIN}" "${selectedId}" |
+        dialog --backtitle "${BACKTITLE}" --title "Syncing ${selectedId}..." --progressbox "${height}" "${width}" >"${tty_fd}"
+      sleep 3
+    else
+      dialog --backtitle "${BACKTITLE}" --infobox "No available locations!" 3 "${width}" >"${tty_fd}"
+      sleep 3
+      break
+    fi
   done
 }

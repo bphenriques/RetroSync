@@ -35,6 +35,6 @@ if [ "${num_conflicts}" -gt 0 ]; then
       error "Failed to sync %s! See %s for more details" "${id}" "${RETROSYNC[logFile]}"
     fi
   else
-    debug "Skipping as the resolution is set to 'manual'\n"
+    printf "Found %s conflicts, handle them manually!\n" "${conflicts[@]}"
   fi
 fi

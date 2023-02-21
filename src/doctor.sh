@@ -14,13 +14,18 @@ case "$BASH_VERSION" in
     ;;
 esac
 
-if ! command -v dialog >/dev/null; then
-  printf '[WARN] dialog binary not available which is required for the GUI interface!\n'
+if ! command -v jq > /dev/null; then
+  printf '[FAIL] jq binary is not installed!\n'
+  exit 1
 fi
 
-if ! command -v jq >/dev/null; then
-  any_failure=1
-  printf '[FAIL] jq binary is not available!\n'
+if ! command -v rclone > /dev/null; then
+  printf '[FAIL] rclone binary is not installed!\n'
+  exit 1
+fi
+
+if ! command -v dialog >/dev/null; then
+  printf '[WARN] dialog binary not available which is required for the GUI interface!\n'
 fi
 
 if [ ! -f "${RETROSYNC[userCfg]}" ]; then
@@ -33,12 +38,7 @@ if [ ! -d "${RETROSYNC[syncLocations]}" ]; then
   printf "[FAIL] sync directories directory is missing: %s\n" "${RETROSYNC[syncLocations]}"
 fi
 
-# TODO: Check each remote...
-
-if [[ ! -f "${RETROSYNC[rcloneBin]}" ]]; then
-  any_failure=1
-  printf "[FAIL] rclone is not installed: %s\n" "${RETROSYNC[rcloneBin]}"
-fi
+# TODO: Check each remote... "check if the remote mentioned before the ':' exists"
 
 available_ids=( $(config::location_ids) )
 total="${#available_ids[@]}"
@@ -65,9 +65,9 @@ if [ "${total}" -gt 0 ]; then
     done <<< "$(config::location_config "${id}")"
   done
 else
-  printf "[WARN] No locations present at %s" "${RETROSYNC[syncLocations]}"
+  printf "[WARN] No locations present at %s\n" "${RETROSYNC[syncLocations]}"
 fi
 
 if [[ "${any_failure}" == 0 ]]; then
-  printf "[OK] Everything is ok!"
+  printf "[OK] Everything is ok!\n"
 fi

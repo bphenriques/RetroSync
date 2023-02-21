@@ -11,15 +11,13 @@
 + *.state1
 + dc_nvmem.bin
 + vmu_save_*.bin
+- *.cache
 
 # Nintendo DS
 ## Drastic
 + *.dsv
 ## MelonDS
 + *.sav
-
-# PSPSPP
-+ ppsspp/
 
 # SNES
 + *.lcdi

@@ -6,6 +6,7 @@ __RETRO_GUI_HANDLE_CONFLICTS_SOURCED=1
 ListConflicts() {
   declare -A conflicts=()
   declare -A fromDir=()
+
   while read -r id from to filter conflict_strategy; do
     fromDir["${id}"]="${from}"
 
@@ -33,7 +34,7 @@ ListConflicts() {
         --cancel-label "Back"
         --menu "Select:" "${height}" "${width}" 15)
 
-      selectedConflict=$("${selectConflict[@]}" "${conflictOpts[@]}" 2>&1 >/dev/tty1) || MainMenu
+      selectedConflict=$("${selectConflict[@]}" "${conflictOpts[@]}" 2>&1 >"${tty_fd}") || MainMenu
 
       local id
       id="$(echo "${selectedConflict}" | sed -e "s/:.*$//g")"
@@ -43,7 +44,7 @@ ListConflicts() {
         unset 'conflicts["${selectedConflict}"]'
       fi
     else
-      dialog --backtitle "${BACKTITLE}" --infobox "No conflicts!" 3 "${width}" >/dev/tty1
+      dialog --backtitle "${BACKTITLE}" --infobox "No conflicts!" 3 "${width}" >"${tty_fd}"
       sleep 3
       break
     fi
@@ -80,7 +81,7 @@ SolveFileConflict() {
     --clear
     --menu "${msg}" "${height}" "${width}" 4)
 
-  resolution="$("${chooseResolution[@]}" "${resolutionOpts[@]}" 2>&1 >/dev/tty1)" || ListConflicts
+  resolution="$("${chooseResolution[@]}" "${resolutionOpts[@]}" 2>&1 >"${tty_fd}")" || ListConflicts
   case "${resolution}" in
     "Keep Both") "${SOLVE_CONFLICTS_BIN}" "${file_path1}" "manual" >/dev/null ;;
     "Keep NEWER")
@@ -96,7 +97,7 @@ SolveFileConflict() {
       printf "Solved"
       ;;
     *)
-      dialog --backtitle "${BACKTITLE}" --infobox "ERROR: Unknown resolution $resolution" 4 "${width}" >/dev/tty1
+      dialog --backtitle "${BACKTITLE}" --infobox "ERROR: Unknown resolution $resolution" 4 "${width}" >"${tty_fd}"
       sleep 3
       ;;
   esac

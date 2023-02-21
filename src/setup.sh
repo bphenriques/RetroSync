@@ -6,15 +6,11 @@ source "${SCRIPT_PATH}"/lib/config.sh
 # shellcheck disable=SC1091
 source "${SCRIPT_PATH}"/lib/rclone.sh
 
-rclone::install
-
-# sudo apt-get install jq
-
 if [[ ! -f "${RETROSYNC[userCfg]}" ]]; then
   mkdir -p "${RETROSYNC[userCfgDir]}"
   touch "${RETROSYNC[userCfg]}"
 fi
 
-config::set deviceId "$(hostname -s)" "${RETROSYNC[userCfg]}"
+config::set deviceId "${HOSTNAME:-$HOST}" "${RETROSYNC[userCfg]}"
 
 cp -f "${SCRIPT_PATH}"/resources/filters/* "${RETROSYNC[rcloneFilterDir]}"

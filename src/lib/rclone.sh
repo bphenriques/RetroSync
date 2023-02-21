@@ -4,7 +4,8 @@ if [ -n "$__RETRO_SYNC_RCLONE_SOURCED" ]; then return; fi
 __RETRO_SYNC_RCLONE_SOURCED=1
 
 rclone::install() {
-  if [ ! -f "${RETROSYNC[rcloneBin]}" ]; then
+  local target="$1"
+  if [ ! -f "${target}" ]; then
     printf "rclone is not installed! Downloading and installing...\n"
 
     local arch
@@ -24,12 +25,12 @@ rclone::install() {
     wget --tries 3 --timeout 60 --quiet --show-progress "$RCLONE_URL" -O "${install_dir}/rclone.zip"
     unzip -o "${install_dir}/rclone.zip" -d "${install_dir}"
 
-    mkdir -p "$(dirname "${RETROSYNC[rcloneBin]}")"
-    mv "${install_dir}/$(basename "$RCLONE_URL" .zip)/rclone" "${RETROSYNC[rcloneBin]}"
+    mkdir -p "$(dirname "${target}")"
+    mv "${install_dir}/$(basename "$RCLONE_URL" .zip)/rclone" "${target}"
     rm -rf "${install_dir}"
-    printf "rclone is now available at %s!\n" "${RETROSYNC[rcloneBin]}"
+    printf "rclone is now available at %s!\n" "${target}"
   else
-    printf "rclone is already installed at %s!\n" "${RETROSYNC[rcloneBin]}"
+    printf "rclone is already installed at %s!\n" "${target}"
   fi
 }
 
@@ -40,7 +41,7 @@ rclone::bisync() {
   local resync="$4"
 
   declare -a flags
-  flags=(--max-delete "${RETROSYNC[maxDeleteProtectionPercent]}" --verbose --log-file "${RETROSYNC[logFile]}")
+  flags=(--max-delete "${RETROSYNC[maxDeleteProtectionPercent]}" --verbose --force --log-file "${RETROSYNC[logFile]}")
   if [[ "${resync}" != 0 ]]; then
     flags+=("--resync")
   fi

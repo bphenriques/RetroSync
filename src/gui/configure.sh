@@ -12,7 +12,7 @@ gui::config::defaultConflictResolution() {
     --clear
     --menu "Current: ${RETROSYNC[defaultMergeStrategy]}" "${height}" "${width}" 4)
 
-  resolution="$("${chooseResolution[@]}" "${resolutionOpts[@]}" 2>&1 >/dev/tty1)" || true
+  resolution="$("${chooseResolution[@]}" "${resolutionOpts[@]}" 2>&1 >"${tty_fd}")" || true
   case "${resolution}" in
     manual|most-recent|keep-left|keep-right)
     config::set defaultMergeStrategy "${resolution}"
@@ -37,7 +37,7 @@ gui::config::retroarch() {
     --cancel-label "Back"
     --menu "Select:" "${height}" "${width}" 15)
 
-  selectedRetroarchLoc=$("${selectConflict[@]}" "${retroarchLocations[@]}" 2>&1 >/dev/tty1)
+  selectedRetroarchLoc=$("${selectConflict[@]}" "${retroarchLocations[@]}" 2>&1 >"${tty_fd}")
   gui::config::retroarch::setup "${selectedRetroarchLoc}"
 }
 
@@ -46,7 +46,7 @@ gui::config::retroarch::setup() {
   message="Location: ${file}\n\nBackup and update retroarch.cfg to put saves next to the content?"
   if dialog --backtitle "${BACKTITLE}" --title "Organize saves" --yesno "${message}" "${height}" "${width}"; then
     retroarch::setup "${file}" |
-      dialog --backtitle "${BACKTITLE}" --title "Updating retroarch.cfg..." --progressbox "${height}" "${width}" >/dev/tty1
+      dialog --backtitle "${BACKTITLE}" --title "Updating retroarch.cfg..." --progressbox "${height}" "${width}" >"${tty_fd}"
       sleep 4
   fi
 }
@@ -63,7 +63,7 @@ Configure() {
     --menu "Please make your selection" "${height}" "${width}" 15)
 
   while true; do
-    configureOpt="$("${configureMenu[@]}" "${configureOpts[@]}" 2>&1 >/dev/tty1)"
+    configureOpt="$("${configureMenu[@]}" "${configureOpts[@]}" 2>&1 >"${tty_fd}")"
     case "${configureOpt}" in
       1) gui::config::defaultConflictResolution ;;
       2) gui::config::retroarch ;;

@@ -1,5 +1,5 @@
 {
-  "from": "/roms2/ports/stardewvalley/savedata/Saves",
+  "from": "/home/deck/.config/StardewValley/Saves",
   "to": "dropbox:modern/stardew_valley",
   "filter": "everything.txt"
 }

@@ -1,0 +1,5 @@
+{
+  "from": "/var/run/media/mmcblk0p1/Emulation/roms/dos",
+  "to": "dropbox:roms/dos",
+  "filter": "retroarch-default.txt"
+}

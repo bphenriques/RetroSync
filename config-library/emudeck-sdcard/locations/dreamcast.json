@@ -1,0 +1,5 @@
+{
+  "from": "/var/run/media/mmcblk0p1/Emulation/roms/dreamcast",
+  "to": "dropbox:roms/dreamcast/deck",
+  "filter": "retroarch-default.txt"
+}

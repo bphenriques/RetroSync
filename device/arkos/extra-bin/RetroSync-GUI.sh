@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # shellcheck disable=SC1091
 SCRIPT_PATH="$(dirname "$0")"
@@ -29,7 +29,7 @@ printf "\033c" >/dev/tty1
 CONTROLS="/opt/wifi/oga_controls"
 sudo $CONTROLS test-ui.sh rg552 &
 
-if ! "${SCRIPT_PATH}"/RetroSync/gui.sh "${height}" "${width}"; then
+if ! "${SCRIPT_PATH}"/RetroSync/gui.sh "${height}" "${width}" /dev/tty1; then
   printf "Failed to run the GUI!"
 fi
 

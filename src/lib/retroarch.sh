@@ -36,7 +36,7 @@ retroarch::set() {
     local key="${1}"
     local value="${2}"
     local file="${3}"
-    local keyValue="${key}=${value}"
+    local keyValue="${key} = \"${value}\""
 
     printf "Setting %s=%s\n" "${key}" "${value}"
     if grep -E "^[[:space:]]*${key}[[:space:]]*=.*$" "${file}" >/dev/null; then
