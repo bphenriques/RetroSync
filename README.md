@@ -1,11 +1,15 @@
 # Retro Games Sync
 
-A personal experimental tool to synchronize files between my retro-handhelds using [rclone](https://rclone.org/bisync/). 
+A personal **experimental tool** to synchronize files between my retro-handhelds using [rclone](https://rclone.org/bisync/). 
+
+<img width="744" alt="image" src="https://user-images.githubusercontent.com/4727729/220428384-0ddb0063-cda0-4424-b93b-1958716dbbd2.png">
 
 It is potentially extensible to other systems as long as they are based on GNU Linux and have at least `bash` 4 available.
-I will not extend this _more_ without considering re-writing it: better cross-platform GUI, less `bash`ing and better packaging. 
+I will not extend this _more_ without considering re-writing it: better cross-platform GUI, less `bash`ing and better packaging.
 
-For now, I will do minor adjustment so that I focus on playing the games :)
+For now, I will do minor adjustment so that I focus on playing the games :) If you want something stable consider the following:
+- SteamDeck: https://github.com/DavidDeSimone/OpenCloudSaves
+- ArkOS: https://github.com/ridgekuhn/arklone-arkos
 
 Tested systems:
 - [Anbernic RG353M](https://anbernic.com/products/rg353m)([ArkOS](https://github.com/christianhaitian/arkos))
@@ -70,8 +74,9 @@ scp -r config-library/emudeck-sdcard/locations deck:/home/deck/.config/retrosync
 
 # TODO:
 - [ ] Automate file renaming between NDS emuladors (Drastic `.dsv` <-> melonDS `.sav`).
-- [ ] Enable force-sync
-- [ ] Disable/Delete locations
+- [ ] GUI: Force-Sync.
+- [ ] GUI: Have better logs in case something goes wrong.
+- [ ] GUI: See configured locations and delete/disable them.
 
 
 Then.. one day I would like to try re-writing this on a proper language. `Bash` is not the most pleasant tool to work with.
