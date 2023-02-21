@@ -7,28 +7,26 @@ A personal **experimental tool** to synchronize files between my retro-handhelds
 It is potentially extensible to other systems as long as they are based on GNU Linux and have at least `bash` 4 available.
 I will not extend this _more_ without considering re-writing it: better cross-platform GUI, less `bash`ing and better packaging.
 
-For now, I will do minor adjustment so that I focus on playing the games :) If you want something stable consider the following:
+Use-cases:
+* Backup save games.
+* Cross-system save games (depends on how the saves are structured).
+
+## Disclaimer
+
+This is a experimental tool. For now, I will do minor adjustment so that I focus on playing the games :) If you want something more stable consider the alternatives:
 - SteamDeck: https://github.com/DavidDeSimone/OpenCloudSaves
 - ArkOS: https://github.com/ridgekuhn/arklone-arkos
+
+# Installation
 
 Tested systems:
 - [Anbernic RG353M](https://anbernic.com/products/rg353m)([ArkOS](https://github.com/christianhaitian/arkos))
 - [Steam Deck using Emudeck](https://store.steampowered.com/steamdeck)[EmuDeck](https://github.com/dragoonDorise/EmuDeck)
 
-Does not support:
-- Android
-- Windows (maybe through [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)).
-
-Use-cases (see more below):
-* Sync ROMs across your devices.
-* Backup save games.
-* Cross-system save games.
-
-# Installation
-
 Requirements:
 - SSH connection to the device.
 - **ATTENTION**: A backup!
+- Bash > 4.0
 
 Information:
 - `rg353m` and `deck` are my SSH aliases. Use your own SSH targets.
@@ -77,6 +75,3 @@ scp -r config-library/emudeck-sdcard/locations deck:/home/deck/.config/retrosync
 - [ ] GUI: Force-Sync.
 - [ ] GUI: Have better logs in case something goes wrong.
 - [ ] GUI: See configured locations and delete/disable them.
-
-
-Then.. one day I would like to try re-writing this on a proper language. `Bash` is not the most pleasant tool to work with.
