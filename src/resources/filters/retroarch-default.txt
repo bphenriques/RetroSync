@@ -1,0 +1,35 @@
+# Save Game
++ *.srm
+
+# State files
++ *.state
+
+# DOSBox Pure
++ *.pure.{zip,ZIP}
+
+# Dreamcast
++ *.state1
++ dc_nvmem.bin
++ vmu_save_*.bin
+- *.cache
+
+# Nintendo DS
+## Drastic
++ *.dsv
+## MelonDS
++ *.sav
+
+# SNES
++ *.lcdi
++ *.mcd
++ savestates/*.sav
+
+# Retro Sync
+## Backups
++ *.info
++ *.backup.*
+
+- .netplay/
+
+# exclude everything else
+- *

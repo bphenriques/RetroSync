@@ -1,0 +1,5 @@
+{
+  "from": "/var/run/media/mmcblk0p1/Emulation/roms/fbneo",
+  "to": "dropbox:roms/arcade",
+  "filter": "retroarch-default.txt"
+}

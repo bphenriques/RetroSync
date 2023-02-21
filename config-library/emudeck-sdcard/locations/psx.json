@@ -1,0 +1,5 @@
+{
+  "from": "/var/run/media/mmcblk0p1/Emulation/saves/duckstation/saves",
+  "to": "dropbox:roms/psx",
+  "filter": "retroarch-default.txt"
+}

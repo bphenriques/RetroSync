@@ -1,0 +1,5 @@
+{
+  "from": "/roms2/psx",
+  "to": "dropbox:roms/psx",
+  "filter": "retroarch-default.txt"
+}

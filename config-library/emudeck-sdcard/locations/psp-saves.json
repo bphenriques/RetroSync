@@ -1,0 +1,5 @@
+{
+  "from": "/var/run/media/mmcblk0p1/Emulation/saves/ppsspp/saves",
+  "to": "dropbox:roms/psp/saves",
+  "filter": "everything.txt"
+}

@@ -1,12 +1,19 @@
 # Retro Games Sync
 
-A tool to synchronize files between my retro-handhelds using [rclone](https://rclone.org/bisync/). It is potentially
-extensible to other systems but, for now, only supports the systems I use.
+A personal **experimental tool** to synchronize files between my retro-handhelds using [rclone](https://rclone.org/bisync/). 
 
-Systems supported:
+<img width="744" alt="image" src="https://user-images.githubusercontent.com/4727729/220428384-0ddb0063-cda0-4424-b93b-1958716dbbd2.png">
+
+It is potentially extensible to other systems as long as they are based on GNU Linux and have at least `bash` 4 available.
+I will not extend this _more_ without considering re-writing it: better cross-platform GUI, less `bash`ing and better packaging.
+
+For now, I will do minor adjustment so that I focus on playing the games :) If you want something stable consider the following:
+- SteamDeck: https://github.com/DavidDeSimone/OpenCloudSaves
+- ArkOS: https://github.com/ridgekuhn/arklone-arkos
+
+Tested systems:
 - [Anbernic RG353M](https://anbernic.com/products/rg353m)([ArkOS](https://github.com/christianhaitian/arkos))
-- [Steam Deck](https://store.steampowered.com/steamdeck)[EmuDeck](https://github.com/dragoonDorise/EmuDeck)
-- Theoretically any Unix device.
+- [Steam Deck using Emudeck](https://store.steampowered.com/steamdeck)[EmuDeck](https://github.com/dragoonDorise/EmuDeck)
 
 Does not support:
 - Android
@@ -14,45 +21,62 @@ Does not support:
 
 Use-cases (see more below):
 * Sync ROMs across your devices.
-* Cross-system save games.
 * Backup save games.
-
-Fair warnings:
-- This will change retroArch settings to write the save games onto the same directories as the roms.
+* Cross-system save games.
 
 # Installation
 
 Requirements:
-- SSH connection to the target machine
+- SSH connection to the device.
 - **ATTENTION**: A backup!
-- 
-Steps:
-1. Clone the project: `git clone https://github.com/bphenriques/arkos-emudeck-syncer`
-2. Edit `arkos/folders.txt` or `steamdeck/folders.txt` according to your needs ([rclone bisync supported backends](https://rclone.org/bisync/#supported-backends)).
-   
-   Suggestion: play around with your-save games in each device until you find where exactly each save game is. To be sure, try to copy each save-game manually to confirm cross-compatibility.
 
-3. Install:
+Information:
+- `rg353m` and `deck` are my SSH aliases. Use your own SSH targets.
+- The Steam Deck installation will disable read-only FS temporarily.
 
-    ArkOS: `./install.sh arkos ark@192.168.68.61 /roms2/tools "/home/ark/.config/retroarch/retroarch.cfg"`
+Install:
 
-    Steam Deck: `./install.sh steamdeck deck@192.168.68.67 /run/media/mmcblk0p1/ /home/deck/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg`
+- ArkOS: 
+   `$ ./bin/dev-install.sh rg353m arkos "/opt/system/Tools"`
 
-4. Connect to the machine using SSH tunneling (important for [rclone](https://rclone.org/dropbox/#get-your-own-dropbox-app-id)).
-5. Go to the installation directory: `cd /roms2/tools/SyncSaveGames`.
-6. Run `./setup.sh` which will install `rclone`.
-7. Run `/usr/local/bin/rclone config` to setup the remote with the same name, as the one you entered in `folders.txt`. For dropbox, follow this [guide](https://rclone.org/dropbox/#get-your-own-dropbox-app-id).
-8. Backup your save-games if you haven't already!
-9. Test by doing a initial sync: `cd .. && ./SyncSaveGames.sh`.
+- Steam Deck:
+  1. If-first-time: `sudo steamos-readonly disable && sudo pacman-key --init && sudo pacman-key --populate archlinux && sudo pacman -S jq rclone dialog && sudo steamos-readonly enable`
+  2. Install: `$ ./bin/dev-install.sh deck steamdeck "/home/deck/.bin"`
 
-# Notes
+Post Installation:
+1. Go to `Options > Tools` and open `RetroSync-GUI.sh` and optionally go to `Configure > Setup retroarch...` to organize save-games.
+2. Setup rclone (for dropbox I suggest [this guide](https://rclone.org/dropbox/#get-your-own-dropbox-app-id)).
+3. Add locations to sync under `${XDG_CONFIG_HOME:-$HOME/.config}/retrosync/locations`:
+  
+   ```json
+   {
+     "from": "/roms2/arcade",
+     "to": "dropbox:roms/arcade",
+     "filter": "retroarch-default.txt",
+     "on_conflict": "manual"
+   }
+   ```
 
-Sometimes gets finicky with empty folders. For that reason, I suggest adding a `system-info.info` so that at least one file is present.
+Notes: I do not recommend setting up cross-saving for systems where:
+- All the saves are stored in a specific set of files (e.g., dreamcast).
 
-# Limitations
-- PSX: Ensure name ends with `{rom_base_name}_1.mcd`
-- NDS: The file must always end with .dsv (Drastic saves as `.dsv` and melonDS as `.sav`)
+# Basic configuration
 
-# Development Notes
+ArkOS:
+```shell    
+scp -r config-library/arkos-secondary-sd/locations rg353m:/home/ark/.config/retrosync/
+````
 
-The bash version used in RG353M is `5.0.3(1)-release`.
+SteamDeck:
+```shell
+scp -r config-library/emudeck-sdcard/locations deck:/home/deck/.config/retrosync/
+````
+
+# TODO:
+- [ ] Automate file renaming between NDS emuladors (Drastic `.dsv` <-> melonDS `.sav`).
+- [ ] GUI: Force-Sync.
+- [ ] GUI: Have better logs in case something goes wrong.
+- [ ] GUI: See configured locations and delete/disable them.
+
+
+Then.. one day I would like to try re-writing this on a proper language. `Bash` is not the most pleasant tool to work with.

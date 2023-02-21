@@ -1,0 +1,6 @@
+{
+  "from": "/var/run/media/mmcblk0p1/Emulation/bios/dc",
+  "to": "dropbox:roms/bios/dc/deck",
+  "filter": "retroarch-default.txt",
+  "on_conflict": "manual"
+}
