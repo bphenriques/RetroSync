@@ -16,6 +16,7 @@ Use-cases:
 This is a experimental tool. For now, I will do minor adjustment so that I focus on playing the games :) If you want something more stable consider the alternatives:
 - SteamDeck: https://github.com/DavidDeSimone/OpenCloudSaves
 - ArkOS: https://github.com/ridgekuhn/arklone-arkos
+- JELOS: https://github.com/JustEnoughLinuxOS/distribution/wiki/Using-Cloud-Drives
 
 # Installation
 
